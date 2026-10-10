@@ -109,6 +109,7 @@ sequenceDiagram
 					<li><a href={withBase('blog/page-cache-and-writeback')}>Page cache and writeback</a></li>
 					<li><a href={withBase('blog/slab-allocator-and-kmalloc')}>Slab allocator and kmalloc</a></li>
 					<li><a href={withBase('blog/mmap-and-page-faults-deep')}>mmap and page faults (deep)</a></li>
+					<li><a href={withBase('blog/userfaultfd-and-remote-faults')}>userfaultfd and remote faults</a></li>
 					<li><a href={withBase('blog/epoll-and-event-loops')}>epoll and event loops</a></li>
 					<li><a href={withBase('blog/memory-reclaim-and-oom')}>Memory reclaim and OOM</a></li>
 					<li><a href={withBase('blog/timers-and-timekeeping')}>Timers and timekeeping</a></li>
@@ -176,6 +177,7 @@ sequenceDiagram
 					<li><a href={withBase('blog/sockets-and-the-networking-stack')}>Sockets and the networking stack</a></li>
 					<li><a href={withBase('blog/af-unix-sockets')}>AF_UNIX sockets</a></li>
 					<li><a href={withBase('blog/tcp-state-machine-sketch')}>TCP state machine sketch</a></li>
+					<li><a href={withBase('blog/netfilter-and-hooks-sketch')}>Netfilter hooks sketch</a></li>
 					<li><a href={withBase('blog/epoll-and-event-loops')}>epoll and event loops</a></li>
 					<li><a href={withBase('blog/interrupts-softirqs-and-tasklets')}>Interrupts and softirqs</a></li>
 					<li>
@@ -202,6 +204,7 @@ sequenceDiagram
 				<ul>
 					<li><a href={withBase('blog/locks-spinlocks-mutexes-rcu')}>Locks: spinlocks, mutexes, RCU</a></li>
 					<li><a href={withBase('blog/futexes-userspace-to-kernel')}>Futexes: userspace to kernel</a></li>
+					<li><a href={withBase('blog/workqueues-and-kthreads')}>Workqueues and kthreads</a></li>
 					<li><a href={withBase('blog/kernel-modules-and-device-model')}>Kernel modules and the device model</a></li>
 					<li><a href={withBase('blog/interrupts-softirqs-and-tasklets')}>Interrupts, softirqs, and bottom halves</a></li>
 				</ul>
@@ -226,7 +229,9 @@ mindmap
 				<ul>
 					<li><a href={withBase('blog/namespaces-and-cgroups')}>Namespaces and cgroups</a></li>
 					<li><a href={withBase('blog/pid-namespaces-deep')}>PID namespaces (deep)</a></li>
+					<li><a href={withBase('blog/cgroup-v2-controllers')}>cgroup v2 controllers</a></li>
 					<li><a href={withBase('blog/capabilities-and-lsm-intro')}>Capabilities and LSM intro</a></li>
+					<li><a href={withBase('blog/seccomp-bpf-intro')}>seccomp-BPF intro</a></li>
 					<li><a href={withBase('blog/anatomy-of-a-linux-process')}>Anatomy of a Linux process</a></li>
 					<li>
 						External:

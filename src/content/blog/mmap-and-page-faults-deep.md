@@ -85,5 +85,6 @@ stateDiagram-v2
 
 - [Virtual memory walkthrough](/linternals/blog/virtual-memory-walkthrough/)
 - [Page tables and the TLB](/linternals/blog/page-tables-and-tlb/)
+- [userfaultfd and remote faults](/linternals/blog/userfaultfd-and-remote-faults/)
 - [Page cache and writeback](/linternals/blog/page-cache-and-writeback/)
 - [ELF loading and dynamic linking](/linternals/blog/elf-loading-and-dynamic-linking/)

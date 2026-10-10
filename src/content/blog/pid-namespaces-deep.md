@@ -85,6 +85,6 @@ ps -ef | head
 ## Keep reading
 
 - [Namespaces and cgroups](/linternals/blog/namespaces-and-cgroups/)
+- [cgroup v2 controllers](/linternals/blog/cgroup-v2-controllers/)
 - [Anatomy of a Linux process](/linternals/blog/anatomy-of-a-linux-process/)
 - [Capabilities and LSM intro](/linternals/blog/capabilities-and-lsm-intro/)
----

@@ -67,4 +67,3 @@ sudo iptables -L -n 2>/dev/null | head -30 || true
 - [Sockets and the networking stack](/linternals/blog/sockets-and-the-networking-stack/)
 - [TCP state machine sketch](/linternals/blog/tcp-state-machine-sketch/)
 - [Namespaces and cgroups](/linternals/blog/namespaces-and-cgroups/)
----

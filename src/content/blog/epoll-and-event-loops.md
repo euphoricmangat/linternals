@@ -83,4 +83,3 @@ PY
 - [Syscalls: crossing the boundary](/linternals/blog/syscalls-crossing-the-boundary/)
 - [io_uring intro](/linternals/blog/io-uring-intro/)
 - [Sockets and the networking stack](/linternals/blog/sockets-and-the-networking-stack/)
----

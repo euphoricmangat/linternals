@@ -80,4 +80,3 @@ which io_uring_test 2>/dev/null || echo "install liburing-examples or build samp
 - [epoll and event loops](/linternals/blog/epoll-and-event-loops/)
 - [VFS and the open path](/linternals/blog/vfs-and-the-open-path/)
 - [Block layer and bio](/linternals/blog/block-layer-and-bio/)
----

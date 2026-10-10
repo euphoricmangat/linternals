@@ -74,5 +74,6 @@ cat /sys/kernel/security/lsm 2>/dev/null
 ## Keep reading
 
 - [Namespaces and cgroups](/linternals/blog/namespaces-and-cgroups/)
+- [seccomp-BPF intro](/linternals/blog/seccomp-bpf-intro/)
 - [Syscalls: crossing the boundary](/linternals/blog/syscalls-crossing-the-boundary/)
 - [man 7 capabilities](https://man7.org/linux/man-pages/man7/capabilities.7.html)

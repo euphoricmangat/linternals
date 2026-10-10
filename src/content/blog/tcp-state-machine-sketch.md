@@ -86,5 +86,5 @@ ss -ti sport = :22 | head -20
 
 - [Sockets and the networking stack](/linternals/blog/sockets-and-the-networking-stack/)
 - [AF_UNIX sockets](/linternals/blog/af-unix-sockets/)
+- [Netfilter hooks sketch](/linternals/blog/netfilter-and-hooks-sketch/)
 - [Interrupts, softirqs, and tasklets](/linternals/blog/interrupts-softirqs-and-tasklets/)
----

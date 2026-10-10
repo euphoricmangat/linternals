@@ -22,6 +22,11 @@ const blog = defineCollection({
 					'kernel',
 					'syscalls',
 					'tools',
+					'interrupts',
+					'sync',
+					'containers',
+					'drivers',
+					'elf',
 				])
 				.optional(),
 			difficulty: z.enum(['intro', 'intermediate', 'deep']).default('intro'),

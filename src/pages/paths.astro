@@ -11,7 +11,7 @@ import { withBase } from '../utils/url';
 	<head>
 		<BaseHead
 			title="Learning paths"
-			description="Suggested routes through Linux internals — from boot to memory, syscalls, and reading kernel source."
+			description="Suggested routes through Linux internals — boot, processes, memory, VFS, networking, sync, containers, and more."
 		/>
 	</head>
 	<body>
@@ -20,10 +20,30 @@ import { withBase } from '../utils/url';
 			<header class="page-head animate-rise">
 				<h1>Learning paths</h1>
 				<p>
-					Pick a trail. Each path points at notes on this site and classic open sources (kernel
-					docs, LWN, man pages) so you can learn without paying for a course.
+					Pick a trail. Each path points at notes on this site and classic open sources so you can
+					learn without paying for a course.
 				</p>
 			</header>
+
+			<section class="overview diagram">
+				<h2>The curriculum map</h2>
+				<script type="text/plain" class="mermaid-source">
+flowchart TB
+  Boot[Boot] --> Proc[Process]
+  Proc --> Mem[Memory]
+  Proc --> Sig[Signals]
+  Mem --> Sys[Syscalls]
+  Sys --> VFS[VFS / FS]
+  Sys --> Net[Networking]
+  Sys --> Irq[Interrupts]
+  Irq --> Lock[Sync / RCU]
+  Proc --> Ns[Namespaces]
+  Ns --> Cg[cgroups]
+  Sys --> Elf[ELF / loaders]
+  Kernel[Modules / drivers] --> Irq
+  Tools[procfs / tracing] --> Kernel
+				</script>
+			</section>
 
 			<section class="path animate-rise-delay">
 				<h2>Path A — From power-on to PID 1</h2>
@@ -38,6 +58,7 @@ flowchart TD
 				</script>
 				<ul>
 					<li><a href={withBase('blog/how-the-kernel-boots')}>How the kernel boots</a></li>
+					<li><a href={withBase('blog/procfs-and-observability')}>procfs and observability</a></li>
 					<li>
 						External: <a href="https://docs.kernel.org/admin-guide/init.html" target="_blank" rel="noopener"
 							>kernel.org — init</a
@@ -58,6 +79,7 @@ flowchart LR
 				</script>
 				<ul>
 					<li><a href={withBase('blog/anatomy-of-a-linux-process')}>Anatomy of a Linux process</a></li>
+					<li><a href={withBase('blog/signals-and-process-lifecycle')}>Signals and process lifecycle</a></li>
 					<li>
 						External: <a href="https://docs.kernel.org/scheduler/" target="_blank" rel="noopener"
 							>kernel.org — scheduler</a
@@ -82,7 +104,88 @@ sequenceDiagram
 				<ul>
 					<li><a href={withBase('blog/syscalls-crossing-the-boundary')}>Syscalls: crossing the boundary</a></li>
 					<li><a href={withBase('blog/virtual-memory-walkthrough')}>Virtual memory walkthrough</a></li>
+					<li><a href={withBase('blog/elf-loading-and-dynamic-linking')}>ELF loading and dynamic linking</a></li>
 					<li><a href={withBase('blog/reading-kernel-source')}>Reading kernel source: where to start</a></li>
+				</ul>
+			</section>
+
+			<section class="path">
+				<h2>Path D — Filesystems &amp; VFS</h2>
+				<p>Pathnames become dentries, inodes, and file objects.</p>
+				<script type="text/plain" class="mermaid-source">
+flowchart LR
+  Path[pathname] --> D[dentry]
+  D --> I[inode]
+  I --> F[struct file]
+  F --> Ops[file_operations]
+				</script>
+				<ul>
+					<li><a href={withBase('blog/vfs-and-the-open-path')}>VFS and the open path</a></li>
+					<li>
+						External: <a href="https://docs.kernel.org/filesystems/vfs.html" target="_blank" rel="noopener"
+							>kernel.org — VFS</a
+						>
+					</li>
+				</ul>
+			</section>
+
+			<section class="path">
+				<h2>Path E — Networking</h2>
+				<p>Sockets, sk_buff, and how packets climb the stack.</p>
+				<script type="text/plain" class="mermaid-source">
+flowchart TD
+  Sock[socket API] --> Proto[TCP/UDP]
+  Proto --> IP[IP]
+  IP --> Dev[netdev / NAPI]
+  Dev --> NIC[Driver]
+				</script>
+				<ul>
+					<li><a href={withBase('blog/sockets-and-the-networking-stack')}>Sockets and the networking stack</a></li>
+					<li><a href={withBase('blog/interrupts-softirqs-and-tasklets')}>Interrupts and softirqs</a></li>
+					<li>
+						External: <a href="https://docs.kernel.org/networking/" target="_blank" rel="noopener"
+							>kernel.org — networking</a
+						>
+					</li>
+				</ul>
+			</section>
+
+			<section class="path">
+				<h2>Path F — Concurrency &amp; drivers</h2>
+				<p>Locks, RCU, modules, and the device model.</p>
+				<script type="text/plain" class="mermaid-source">
+flowchart LR
+  IRQ[IRQ top half] --> Soft[softirq]
+  Soft --> Lock[locks / RCU]
+  Mod[module] --> Probe[driver probe]
+  Probe --> Sysfs[sysfs]
+				</script>
+				<ul>
+					<li><a href={withBase('blog/locks-spinlocks-mutexes-rcu')}>Locks: spinlocks, mutexes, RCU</a></li>
+					<li><a href={withBase('blog/kernel-modules-and-device-model')}>Kernel modules and the device model</a></li>
+					<li><a href={withBase('blog/interrupts-softirqs-and-tasklets')}>Interrupts, softirqs, and bottom halves</a></li>
+				</ul>
+			</section>
+
+			<section class="path">
+				<h2>Path G — Containers</h2>
+				<p>Namespaces isolate views; cgroups enforce limits.</p>
+				<script type="text/plain" class="mermaid-source">
+flowchart TB
+  C[Container] --> NS[namespaces]
+  C --> CG[cgroups]
+  NS --> Pid[pid/net/mnt/...]
+  CG --> Res[cpu/memory/io]
+				</script>
+				<ul>
+					<li><a href={withBase('blog/namespaces-and-cgroups')}>Namespaces and cgroups</a></li>
+					<li><a href={withBase('blog/anatomy-of-a-linux-process')}>Anatomy of a Linux process</a></li>
+					<li>
+						External:
+						<a href="https://docs.kernel.org/admin-guide/cgroup-v2.html" target="_blank" rel="noopener"
+							>cgroup v2</a
+						>
+					</li>
 				</ul>
 			</section>
 		</main>
@@ -98,6 +201,17 @@ sequenceDiagram
 	}
 	.page-head p {
 		color: var(--ink-muted);
+	}
+	.overview {
+		margin: 1.5rem 0 2rem;
+		padding: 1.5rem;
+		background: rgba(255, 255, 255, 0.85);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		box-shadow: var(--shadow);
+	}
+	.overview h2 {
+		margin-top: 0;
 	}
 	.path {
 		margin: 2.5rem 0;

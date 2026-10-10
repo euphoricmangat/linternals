@@ -7,7 +7,7 @@ import HeaderLink from './HeaderLink.astro';
 <header>
 	<nav>
 		<a class="brand" href={withBase()}>
-			<span class="brand-mark" aria-hidden="true">λ</span>
+			<span class="brand-mark" aria-hidden="true">μ</span>
 			<span class="brand-name">{SITE_TITLE}</span>
 		</a>
 		<div class="internal-links">
@@ -59,7 +59,7 @@ import HeaderLink from './HeaderLink.astro';
 		place-items: center;
 		width: 1.75rem;
 		height: 1.75rem;
-		background: var(--accent);
+		background: linear-gradient(135deg, var(--accent), var(--accent-2));
 		color: #fff;
 		font-family: var(--font-mono), monospace;
 		font-weight: 600;

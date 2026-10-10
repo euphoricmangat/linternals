@@ -5,6 +5,7 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Deploy using Astro + Actions (not the default Jekyll branch builder).
 permissions:
   contents: read
   pages: write
@@ -27,11 +28,17 @@ jobs:
           node-version: '22'
           cache: npm
 
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
       - name: Install
-        run: npm ci
+        run: npm install
 
       - name: Build
-        run: npm run build
+        run: npx astro build --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.pages.outputs.base_path }}"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

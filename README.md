@@ -41,10 +41,14 @@ flowchart LR
 
 ## Deploy to GitHub Pages (free)
 
-1. Repo: [euphoricmangat/linternals](https://github.com/euphoricmangat/linternals) (already configured in `astro.config.mjs` / `src/consts.ts`).
-2. Push this project to `main`.
-3. In the repo: **Settings → Pages → Source → GitHub Actions**.
-4. The workflow in `.github/workflows/deploy.yml` builds and publishes on every push.
+Repo: [euphoricmangat/linternals](https://github.com/euphoricmangat/linternals)
+
+**Important:** Pages must use **GitHub Actions**, not “Deploy from a branch” (that runs Jekyll and will fail on this Astro repo).
+
+1. Open **Settings → Pages**
+2. Under **Build and deployment → Source**, choose **GitHub Actions**
+3. Open **Actions → Deploy to GitHub Pages → Run workflow** (or push to `main`)
+4. Site: https://euphoricmangat.github.io/linternals/
 
 ### User site instead of project site
 

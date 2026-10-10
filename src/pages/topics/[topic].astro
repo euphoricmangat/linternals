@@ -1,0 +1,116 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { withBase } from '../../utils/url';
+import { sortByCurriculum } from '../../utils/curriculum';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	const topics = new Set(posts.map((p) => p.data.topic ?? 'untagged'));
+	return [...topics].map((topic) => ({ params: { topic } }));
+}
+
+const { topic } = Astro.params;
+const posts = sortByCurriculum(
+	(await getCollection('blog')).filter((p) => (p.data.topic ?? 'untagged') === topic),
+);
+const label = topic ?? 'untagged';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`${label} · Topics`}
+			description={`Linternals notes tagged ${label}.`}
+		/>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<header class="page-head animate-rise">
+				<p class="crumb"><a href={withBase('topics')}>Topics</a> / {label}</p>
+				<h1>{label}</h1>
+				<p>{posts.length} note{posts.length === 1 ? '' : 's'} in curriculum order.</p>
+			</header>
+			<ul class="post-list">
+				{
+					posts.map((post) => (
+						<li>
+							<a href={withBase(`blog/${post.id}`)}>
+								<div class="meta">
+									<FormattedDate date={post.data.pubDate} />
+									{post.data.difficulty && <span class="tag">{post.data.difficulty}</span>}
+								</div>
+								<h2>{post.data.title}</h2>
+								<p>{post.data.description}</p>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	main {
+		width: var(--max);
+		max-width: calc(100% - 2em);
+	}
+	.crumb {
+		font-family: var(--font-mono), monospace;
+		font-size: 0.8rem;
+		color: var(--ink-muted);
+		margin-bottom: 0.5rem;
+	}
+	.page-head p:last-child {
+		color: var(--ink-muted);
+	}
+	h1 {
+		text-transform: capitalize;
+	}
+	.post-list {
+		list-style: none;
+		padding: 0;
+		margin: 1.5rem 0 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+	.post-list a {
+		display: block;
+		padding: 1.15rem 1.25rem;
+		background: rgba(255, 255, 255, 0.8);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		text-decoration: none;
+		color: inherit;
+	}
+	.post-list a:hover {
+		border-color: var(--accent);
+		box-shadow: var(--shadow);
+	}
+	.meta {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+		font-family: var(--font-mono), monospace;
+		font-size: 0.75rem;
+		color: var(--ink-muted);
+		margin-bottom: 0.35rem;
+	}
+	h2 {
+		margin: 0 0 0.35rem;
+		font-size: 1.25rem;
+	}
+	.post-list p {
+		margin: 0;
+		color: var(--ink-muted);
+		font-size: 0.95rem;
+	}
+</style>

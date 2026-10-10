@@ -7,9 +7,22 @@ import Header from '../components/Header.astro';
 import Mermaid from '../components/Mermaid.astro';
 import { withBase } from '../utils/url';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & {
+	prev?: { id: string; title: string } | null;
+	next?: { id: string; title: string } | null;
+};
 
-const { title, description, pubDate, updatedDate, tags = [], topic, difficulty } = Astro.props;
+const {
+	title,
+	description,
+	pubDate,
+	updatedDate,
+	tags = [],
+	topic,
+	difficulty,
+	prev = null,
+	next = null,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -32,7 +45,13 @@ const { title, description, pubDate, updatedDate, tags = [], topic, difficulty }
 							)
 						}
 						{difficulty && <span class="tag">{difficulty}</span>}
-						{topic && <span class="tag">{topic}</span>}
+						{
+							topic && (
+								<a class="tag topic-link" href={withBase(`topics/${topic}`)}>
+									{topic}
+								</a>
+							)
+						}
 					</div>
 					<h1>{title}</h1>
 					<p class="lede">{description}</p>
@@ -50,8 +69,34 @@ const { title, description, pubDate, updatedDate, tags = [], topic, difficulty }
 				<div class="content animate-rise-delay">
 					<slot />
 				</div>
+				<nav class="post-nav" aria-label="Post sequence">
+					{
+						prev ? (
+							<a class="nav-card prev" href={withBase(`blog/${prev.id}`)}>
+								<span class="label">Previous</span>
+								<span class="title">{prev.title}</span>
+							</a>
+						) : (
+							<span class="nav-card empty" />
+						)
+					}
+					{
+						next ? (
+							<a class="nav-card next" href={withBase(`blog/${next.id}`)}>
+								<span class="label">Next</span>
+								<span class="title">{next.title}</span>
+							</a>
+						) : (
+							<span class="nav-card empty" />
+						)
+					}
+				</nav>
 				<p class="back">
 					<a href={withBase('blog')}>&larr; All posts</a>
+					·
+					<a href={withBase('topics')}>Topics</a>
+					·
+					<a href={withBase('paths')}>Paths</a>
 				</p>
 			</article>
 		</main>
@@ -78,6 +123,13 @@ const { title, description, pubDate, updatedDate, tags = [], topic, difficulty }
 		color: var(--ink-muted);
 		margin-bottom: 0.85rem;
 	}
+	.topic-link {
+		text-decoration: none;
+	}
+	.topic-link:hover {
+		background: var(--accent-soft);
+		color: var(--accent-deep);
+	}
 	.lede {
 		color: var(--ink-muted);
 		font-size: 1.15rem;
@@ -88,7 +140,7 @@ const { title, description, pubDate, updatedDate, tags = [], topic, difficulty }
 	}
 	.rule {
 		height: 2px;
-		background: linear-gradient(90deg, var(--accent), transparent);
+		background: linear-gradient(90deg, var(--accent), var(--accent-2), transparent);
 		margin-top: 1.25rem;
 	}
 	.content :global(h2)::before {
@@ -98,10 +150,81 @@ const { title, description, pubDate, updatedDate, tags = [], topic, difficulty }
 		font-weight: 500;
 		font-size: 0.7em;
 	}
-	.back {
-		margin-top: 3rem;
+	.content :global(.lab) {
+		margin: 2rem 0;
+		padding: 1.25rem 1.35rem;
+		background: linear-gradient(135deg, var(--accent-soft), var(--accent-2-soft));
+		border: 1px solid var(--line);
+		border-left: 4px solid var(--accent);
+		border-radius: var(--radius);
+	}
+	.content :global(.lab > :first-child) {
+		margin-top: 0;
+	}
+	.content :global(.lab > :last-child) {
+		margin-bottom: 0;
+	}
+	.content :global(.lab h2),
+	.content :global(.lab h3) {
+		margin-top: 0;
+	}
+	.post-nav {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
+		margin-top: 2.5rem;
 		padding-top: 1.5rem;
 		border-top: 1px solid var(--line);
+	}
+	.nav-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: 1rem 1.1rem;
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		text-decoration: none;
+		color: inherit;
+		background: rgba(255, 255, 255, 0.75);
+		transition:
+			border-color 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+	.nav-card:hover {
+		border-color: var(--accent);
+		box-shadow: var(--shadow);
+	}
+	.nav-card.next {
+		text-align: right;
+	}
+	.nav-card .label {
+		font-family: var(--font-mono), monospace;
+		font-size: 0.72rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--accent-2);
+	}
+	.nav-card .title {
+		font-weight: 600;
 		font-size: 0.95rem;
+		line-height: 1.35;
+	}
+	.nav-card.empty {
+		visibility: hidden;
+		pointer-events: none;
+		border: none;
+		background: transparent;
+	}
+	.back {
+		margin-top: 1.25rem;
+		font-size: 0.95rem;
+	}
+	@media (max-width: 640px) {
+		.post-nav {
+			grid-template-columns: 1fr;
+		}
+		.nav-card.next {
+			text-align: left;
+		}
 	}
 </style>

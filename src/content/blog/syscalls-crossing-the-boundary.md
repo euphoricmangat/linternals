@@ -73,6 +73,26 @@ strace -e trace=openat,read,write,mmap ls /
 strace -c ls /   # summary counts
 ```
 
+<div class="lab">
+
+### Lab — Name the doorway
+
+**Goal:** Turn a userspace action into a syscall name you can grep for.
+
+1. Trace a simple `ls`:
+   ```bash
+   strace -e trace=openat,getdents64,close ls /tmp 2>&1 | head -40
+   ```
+2. Count syscalls for the same command:
+   ```bash
+   strace -c ls /tmp 2>&1 | tail -20
+   ```
+3. Pick one frequent call (often `openat` or `getdents64`) and note it for the [openat source walk](/linternals/blog/walking-openat-in-the-source/).
+
+**Expect:** a short list of file-related syscalls and a summary table of counts.
+
+</div>
+
 ## Why this matters for internals
 
 Once you can name the syscall, you can grep the kernel for `SYSCALL_DEFINE` and read the real policy: permission checks, locking, and which subsystems get involved.

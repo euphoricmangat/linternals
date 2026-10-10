@@ -70,6 +70,28 @@ cat /proc/$$/maps | head
 head -n 40 /proc/$$/smaps
 ```
 
+<div class="lab">
+
+### Lab — Read your own address space
+
+**Goal:** Recognize text, heap, stack, and library mappings.
+
+1. List maps for the current shell:
+   ```bash
+   cat /proc/$$/maps | head -30
+   ```
+2. Find the stack and libc (names vary by distro):
+   ```bash
+   grep -E '\[stack\]|libc' /proc/$$/maps | head
+   ```
+3. Compare RSS for a region via smaps:
+   ```bash
+   awk '/^[[:xdigit:]]/{p=$0} /Rss:/{print p,$0}' /proc/$$/smaps | head -15
+   ```
+**Expect:** executable mappings with `r-xp`, a `[stack]` line, and nonzero RSS on hot regions.
+
+</div>
+
 ## Source landmarks
 
 - `mm/memory.c` — fault handling core
@@ -78,5 +100,5 @@ head -n 40 /proc/$$/smaps
 
 ## Keep reading
 
+- [Page cache and writeback](/linternals/blog/page-cache-and-writeback/)
 - [kernel.org — Memory Management](https://docs.kernel.org/mm/index.html)
-- Next: [Reading kernel source: where to start](/linternals/blog/reading-kernel-source/)

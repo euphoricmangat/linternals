@@ -59,7 +59,31 @@ ps -T -p $$
 bash -c 'echo parent=$$; bash -c "echo child=\$\$"'
 ```
 
+<div class="lab">
+
+### Lab — Process identity
+
+**Goal:** See PID vs TID and parent/child relationships.
+
+1. Print shell identity:
+   ```bash
+   echo "pid=$$ ppid=$PPID"
+   ps -T -p $$
+   ```
+2. Fork a child and compare PIDs:
+   ```bash
+   bash -c 'echo parent=$$; bash -c "echo child=\$\$ ppid=\$PPID"'
+   ```
+3. Peek at `/proc` for the shell:
+   ```bash
+   ls /proc/$$/task | head
+   cat /proc/$$/status | grep -E '^(Name|State|PPid|Threads)'
+   ```
+**Expect:** one PID for the process, one or more TIDs under `task/`, and a sensible `PPid`.
+
+</div>
+
 ## Keep reading
 
-- [kernel.org — Completely Fair Scheduler](https://docs.kernel.org/scheduler/sched-design-CFS.html) (historical CFS docs; modern kernels evolve here)
+- [Scheduler: CFS and EEVDF](/linternals/blog/scheduler-cfs-and-eevdf/)
 - Next: [Syscalls: crossing the boundary](/linternals/blog/syscalls-crossing-the-boundary/)

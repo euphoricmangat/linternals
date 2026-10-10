@@ -22,7 +22,11 @@ const posts = (await getCollection('blog')).sort(
 		<main>
 			<header class="page-head animate-rise">
 				<h1>Posts</h1>
-				<p>Open notes on Linux internals, kernel paths, and how the pieces fit together.</p>
+				<p>
+					Open notes on Linux internals, kernel paths, and how the pieces fit together.
+					Browse by <a href={withBase('topics')}>topic</a> or follow a
+					<a href={withBase('paths')}>learning path</a>.
+				</p>
 			</header>
 			<ul class="post-list">
 				{

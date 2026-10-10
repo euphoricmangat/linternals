@@ -1,0 +1,98 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { withBase } from '../../utils/url';
+
+const posts = await getCollection('blog');
+const byTopic = new Map<string, typeof posts>();
+
+for (const post of posts) {
+	const topic = post.data.topic ?? 'untagged';
+	const list = byTopic.get(topic) ?? [];
+	list.push(post);
+	byTopic.set(topic, list);
+}
+
+const topics = [...byTopic.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title="Topics"
+			description="Browse Linternals notes by topic — boot, memory, VFS, networking, sync, containers, and more."
+		/>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<header class="page-head animate-rise">
+				<h1>Topics</h1>
+				<p>Jump into a slice of the kernel. Each topic lists every note tagged with it.</p>
+			</header>
+			<ul class="topic-grid">
+				{
+					topics.map(([topic, list]) => (
+						<li>
+							<a href={withBase(`topics/${topic}`)}>
+								<span class="name">{topic}</span>
+								<span class="count">{list.length} note{list.length === 1 ? '' : 's'}</span>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	main {
+		width: var(--max);
+		max-width: calc(100% - 2em);
+	}
+	.page-head p {
+		color: var(--ink-muted);
+	}
+	.topic-grid {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		gap: 0.75rem;
+	}
+	.topic-grid a {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		padding: 1.1rem 1.2rem;
+		background: rgba(255, 255, 255, 0.8);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		text-decoration: none;
+		color: inherit;
+		transition:
+			border-color 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+	.topic-grid a:hover {
+		border-color: var(--accent);
+		box-shadow: var(--shadow);
+	}
+	.name {
+		font-family: var(--font-display), Georgia, serif;
+		font-weight: 700;
+		font-size: 1.2rem;
+		text-transform: capitalize;
+	}
+	.count {
+		font-family: var(--font-mono), monospace;
+		font-size: 0.75rem;
+		color: var(--accent-2);
+	}
+</style>

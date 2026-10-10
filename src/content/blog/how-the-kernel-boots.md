@@ -52,6 +52,29 @@ cat /proc/cmdline
 ps -p 1 -o pid,cmd
 ```
 
+<div class="lab">
+
+### Lab — Boot evidence on your machine
+
+**Goal:** Connect firmware/bootloader choices to what `/proc` reports.
+
+1. Record cmdline and kernel version:
+   ```bash
+   uname -r
+   cat /proc/cmdline
+   ```
+2. Identify PID 1 and how long the system has been up:
+   ```bash
+   ps -p 1 -o pid,cmd,etime
+   ```
+3. Optional: list initrd / UKI clues if present:
+   ```bash
+   ls /boot 2>/dev/null | head
+   ```
+**Expect:** a kernel version string, boot flags (e.g. `root=`, `quiet`), and PID 1 as `systemd` or `init`.
+
+</div>
+
 ## Keep reading
 
 - [kernel.org — Early userspace support](https://docs.kernel.org/filesystems/ramfs-rootfs-initramfs.html)

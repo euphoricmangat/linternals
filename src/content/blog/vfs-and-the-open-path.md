@@ -12,11 +12,30 @@ The Virtual File System is the kernel’s common front door. Whether the file li
 ## Objects you meet
 
 ```mermaid
-flowchart LR
-  Path[pathname] --> Dentry[dentry cache]
-  Dentry --> Inode[inode]
-  Inode --> File[struct file]
-  File --> Fops[file_operations]
+classDiagram
+  class dentry {
+    +d_name
+    +d_parent
+    +d_inode
+  }
+  class inode {
+    +i_mode
+    +i_size
+    +i_mapping
+  }
+  class file {
+    +f_pos
+    +f_flags
+    +f_op
+  }
+  class file_operations {
+    +read()
+    +write()
+    +mmap()
+  }
+  dentry --> inode : d_inode
+  file --> inode : f_inode
+  file --> file_operations : f_op
 ```
 
 - **dentry** — cached path component → inode mapping

@@ -41,29 +41,31 @@ const posts = (await getCollection('blog'))
 				<h2>The map at a glance</h2>
 				<p>Everything on this site orbits one idea: follow the path from userspace into the kernel.</p>
 				<script type="text/plain" class="mermaid-source">
-flowchart LR
-  U[Userspace] -->|syscall| K[Kernel]
-  K --> MM[Memory]
-  K --> FS[VFS / FS]
-  K --> NET[Networking]
-  K --> SCH[Scheduler]
-  K --> DRV[Drivers]
+mindmap
+  root((Linux))
+    Userspace
+      libc
+      processes
+    Kernel
+      Memory
+      VFS
+      Networking
+      Scheduler
+      Drivers
 				</script>
 			</section>
 
 			<section class="diagram">
-				<h2>One request, many layers</h2>
-				<p>A single <code>read()</code> walks boot-time plumbing, the syscall gate, and the memory manager.</p>
+				<h2>From power-on to a syscall</h2>
+				<p>A short history of how the machine gets from firmware to useful work.</p>
 				<script type="text/plain" class="mermaid-source">
-flowchart TD
-  Boot[Boot / init] --> Ready[Running system]
-  Ready --> App[App calls read]
-  App --> Gate[Syscall entry]
-  Gate --> VFS[VFS]
-  VFS --> PageCache[Page cache / mm]
-  PageCache --> Disk[Block / FS driver]
-  Disk --> Gate
-  Gate --> App
+timeline
+  title Boot to first useful work
+  Power-on : Firmware / UEFI
+  Bootloader : Load kernel + initramfs
+  start_kernel : Subsystems come up
+  PID 1 : init / systemd
+  First syscall : Userspace talks to the kernel
 				</script>
 			</section>
 

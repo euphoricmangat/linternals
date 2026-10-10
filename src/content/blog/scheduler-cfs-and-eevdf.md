@@ -12,12 +12,27 @@ The scheduler decides which runnable `task_struct` owns the CPU. Classic **CFS**
 ## Placement in the kernel
 
 ```mermaid
-flowchart LR
-  Wake[Wake / fork / tick] --> Enqueue[enqueue_entity]
-  Enqueue --> Tree[Runqueue RB-tree]
-  Tick[Timer tick / need_resched] --> Pick[pick_next_task]
-  Tree --> Pick
-  Pick --> Switch[context_switch]
+sequenceDiagram
+  participant Wake as Wake / fork
+  participant RQ as Runqueue
+  participant Pick as pick_next_task
+  participant CPU as CPU
+  Wake->>RQ: enqueue_entity
+  Note over RQ: timer / need_resched
+  RQ->>Pick: select task
+  Pick->>CPU: context_switch
+```
+
+## Task states the scheduler cares about
+
+```mermaid
+stateDiagram-v2
+  [*] --> Runnable: wake / fork
+  Runnable --> Running: picked
+  Running --> Runnable: preempt / yield
+  Running --> Sleeping: block
+  Sleeping --> Runnable: event
+  Running --> [*]: exit
 ```
 
 ## CFS intuition
@@ -29,16 +44,6 @@ flowchart LR
 ## EEVDF intuition
 
 EEVDF still cares about fairness, but eligibility and **virtual deadlines** refine who may run when — reducing some latency edge cases of pure vruntime picking. Treat CFS docs as historical base; read current `kernel/sched/fair.c` comments for the live rules.
-
-```mermaid
-flowchart TD
-  Ready[Runnable tasks] --> Eligible{Eligible now?}
-  Eligible -->|yes| Deadline[Earliest virtual deadline]
-  Eligible -->|no| Wait[Wait for eligibility]
-  Deadline --> Run[On CPU]
-  Run --> Update[Update lag / vruntime]
-  Update --> Ready
-```
 
 ## Source landmarks
 

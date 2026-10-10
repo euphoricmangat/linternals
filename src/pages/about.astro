@@ -41,11 +41,23 @@ import { withBase } from '../utils/url';
 					<li><strong>GitHub Actions + Pages</strong> — free hosting from this repo</li>
 				</ul>
 
+				<h2>Diagram cheat sheet</h2>
+				<p>Vary Mermaid types so notes do not all look like flowcharts:</p>
+				<ul>
+					<li><strong>sequenceDiagram</strong> — syscalls, IRQs, packet / open timing</li>
+					<li><strong>stateDiagram-v2</strong> — process / fault / scheduler lifecycles</li>
+					<li><strong>classDiagram</strong> — kernel structs and ownership</li>
+					<li><strong>erDiagram</strong> — mm / VMA / page-style relationships</li>
+					<li><strong>mindmap</strong> — topic maps, namespaces, tree overviews</li>
+					<li><strong>timeline</strong> — boot and exec stages</li>
+					<li><strong>flowchart</strong> — only for real decisions (e.g. which lock)</li>
+				</ul>
+
 				<h2>Write a new note</h2>
 				<ol>
 					<li>Add a file under <code>src/content/blog/</code></li>
 					<li>Fill in frontmatter (<code>title</code>, <code>description</code>, <code>pubDate</code>, optional <code>tags</code> / <code>topic</code>)</li>
-					<li>Use Mermaid fences for diagrams</li>
+					<li>Pick a Mermaid type from the cheat sheet (not always flowchart)</li>
 					<li>Run <code>npm run dev</code>, then push to <code>main</code></li>
 				</ol>
 

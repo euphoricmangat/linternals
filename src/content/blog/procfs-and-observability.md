@@ -12,20 +12,20 @@ Before you read source, learn to **ask the running kernel** questions through `/
 ## Map of interfaces
 
 ```mermaid
-flowchart TB
-  subgraph proc [/proc]
-    Pmaps[pid/maps]
-    Pinterrupts[interrupts]
-    Psys[sysctl]
-  end
-  subgraph sys [/sys]
-    Class[class / bus / devices]
-    Module[module params]
-  end
-  Tools[perf / ftrace / bpftrace] --> Kernel[Instrumented kernel]
-  You[You] --> proc
-  You --> sys
-  You --> Tools
+mindmap
+  root((See the kernel))
+    proc
+      pid maps
+      interrupts
+      sysctl
+    sys
+      class
+      bus
+      devices
+    Tracers
+      perf
+      ftrace
+      bpftrace
 ```
 
 ## Everyday commands

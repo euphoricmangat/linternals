@@ -28,20 +28,15 @@ import { withBase } from '../utils/url';
 			<section class="overview diagram">
 				<h2>The curriculum map</h2>
 				<script type="text/plain" class="mermaid-source">
-flowchart TB
-  Boot[Boot] --> Proc[Process]
-  Proc --> Mem[Memory]
-  Proc --> Sig[Signals]
-  Mem --> Sys[Syscalls]
-  Sys --> VFS[VFS / FS]
-  Sys --> Net[Networking]
-  Sys --> Irq[Interrupts]
-  Irq --> Lock[Sync / RCU]
-  Proc --> Ns[Namespaces]
-  Ns --> Cg[cgroups]
-  Sys --> Elf[ELF / loaders]
-  Kernel[Modules / drivers] --> Irq
-  Tools[procfs / tracing] --> Kernel
+mindmap
+  root((Paths))
+    A Boot
+    B Process
+    C Memory syscalls
+    D VFS
+    E Networking
+    F Sync drivers
+    G Containers
 				</script>
 			</section>
 
@@ -49,12 +44,13 @@ flowchart TB
 				<h2>Path A — From power-on to PID 1</h2>
 				<p>Follow the machine from firmware into the kernel and the first userspace process.</p>
 				<script type="text/plain" class="mermaid-source">
-flowchart TD
-  A[Firmware / UEFI] --> B[Bootloader]
-  B --> C[Kernel decompress + setup]
-  C --> D[start_kernel]
-  D --> E[init / systemd]
-  E --> F[Userspace]
+timeline
+  title Path A — boot
+  Firmware : UEFI / BIOS
+  Bootloader : GRUB / systemd-boot
+  Kernel setup : decompress + setup_arch
+  start_kernel : init/main.c
+  Userspace : init / systemd
 				</script>
 				<ul>
 					<li><a href={withBase('blog/how-the-kernel-boots')}>How the kernel boots</a></li>
@@ -71,11 +67,14 @@ flowchart TD
 				<h2>Path B — Process &amp; scheduler</h2>
 				<p>What is a task_struct, how does fork work, and who runs next?</p>
 				<script type="text/plain" class="mermaid-source">
-flowchart LR
-  fork[fork / clone] --> ts[task_struct]
-  ts --> rq[runqueue]
-  rq --> pick[pick_next_task]
-  pick --> switch[context_switch]
+stateDiagram-v2
+  [*] --> Running
+  Running --> Sleeping: block
+  Sleeping --> Running: wake
+  Running --> Runnable: preempt
+  Runnable --> Running: pick_next
+  Running --> Zombie: exit
+  Zombie --> [*]: wait
 				</script>
 				<ul>
 					<li><a href={withBase('blog/anatomy-of-a-linux-process')}>Anatomy of a Linux process</a></li>
@@ -115,11 +114,26 @@ sequenceDiagram
 				<h2>Path D — Filesystems &amp; VFS</h2>
 				<p>Pathnames become dentries, inodes, and file objects.</p>
 				<script type="text/plain" class="mermaid-source">
-flowchart LR
-  Path[pathname] --> D[dentry]
-  D --> I[inode]
-  I --> F[struct file]
-  F --> Ops[file_operations]
+classDiagram
+  class dentry {
+    +d_name
+    +d_inode
+  }
+  class inode {
+    +i_mode
+    +i_mapping
+  }
+  class file {
+    +f_pos
+    +f_op
+  }
+  dentry --> inode : points to
+  file --> inode : opens
+  file --> file_operations : f_op
+  class file_operations {
+    +read()
+    +write()
+  }
 				</script>
 				<ul>
 					<li><a href={withBase('blog/vfs-and-the-open-path')}>VFS and the open path</a></li>
@@ -136,11 +150,17 @@ flowchart LR
 				<h2>Path E — Networking</h2>
 				<p>Sockets, sk_buff, and how packets climb the stack.</p>
 				<script type="text/plain" class="mermaid-source">
-flowchart TD
-  Sock[socket API] --> Proto[TCP/UDP]
-  Proto --> IP[IP]
-  IP --> Dev[netdev / NAPI]
-  Dev --> NIC[Driver]
+sequenceDiagram
+  participant App
+  participant TCP
+  participant IP
+  participant NIC
+  App->>TCP: sendmsg
+  TCP->>IP: sk_buff
+  IP->>NIC: xmit
+  NIC-->>IP: RX skb
+  IP-->>TCP: deliver
+  TCP-->>App: recvmsg
 				</script>
 				<ul>
 					<li><a href={withBase('blog/sockets-and-the-networking-stack')}>Sockets and the networking stack</a></li>
@@ -157,11 +177,14 @@ flowchart TD
 				<h2>Path F — Concurrency &amp; drivers</h2>
 				<p>Locks, RCU, modules, and the device model.</p>
 				<script type="text/plain" class="mermaid-source">
-flowchart LR
-  IRQ[IRQ top half] --> Soft[softirq]
-  Soft --> Lock[locks / RCU]
-  Mod[module] --> Probe[driver probe]
-  Probe --> Sysfs[sysfs]
+sequenceDiagram
+  participant HW as Device
+  participant Top as Hard IRQ
+  participant Soft as Softirq
+  participant Drv as Driver / locks
+  HW->>Top: IRQ
+  Top->>Soft: schedule bottom half
+  Soft->>Drv: process + sync
 				</script>
 				<ul>
 					<li><a href={withBase('blog/locks-spinlocks-mutexes-rcu')}>Locks: spinlocks, mutexes, RCU</a></li>
@@ -174,11 +197,17 @@ flowchart LR
 				<h2>Path G — Containers</h2>
 				<p>Namespaces isolate views; cgroups enforce limits.</p>
 				<script type="text/plain" class="mermaid-source">
-flowchart TB
-  C[Container] --> NS[namespaces]
-  C --> CG[cgroups]
-  NS --> Pid[pid/net/mnt/...]
-  CG --> Res[cpu/memory/io]
+mindmap
+  root((Container))
+    Namespaces
+      pid
+      net
+      mnt
+      user
+    cgroups
+      cpu
+      memory
+      io
 				</script>
 				<ul>
 					<li><a href={withBase('blog/namespaces-and-cgroups')}>Namespaces and cgroups</a></li>

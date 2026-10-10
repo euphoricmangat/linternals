@@ -12,12 +12,13 @@ The Linux kernel is huge. You do not “read it”; you **navigate** it with a q
 ## Orient yourself
 
 ```mermaid
-flowchart TB
-  Q[Pick one question] --> G[grep / cscope / elixir]
-  G --> F[Open one .c file]
-  F --> C[Follow 2-3 callees]
-  C --> D[Cross-check docs / LWN]
-  D --> N[Write a note on Linternals]
+timeline
+  title A one-hour source session
+  Question : Pick one concrete question
+  Search : grep / Elixir / cscope
+  One file : Open a single .c
+  Callees : Follow 2-3 calls
+  Notes : Cross-check docs / write Linternals note
 ```
 
 Good first questions:
@@ -27,6 +28,19 @@ Good first questions:
 - What runs between `start_kernel` and PID 1?
 
 ## Top-level tree (abbreviated)
+
+```mermaid
+mindmap
+  root((linux/))
+    kernel
+    mm
+    fs
+    net
+    arch
+    drivers
+    include
+    Documentation
+```
 
 | Directory | Role |
 | --- | --- |

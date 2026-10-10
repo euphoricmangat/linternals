@@ -12,21 +12,20 @@ Docker/Podman feel magical until you see the two kernel features underneath: **n
 ## Isolation vs limits
 
 ```mermaid
-flowchart LR
-  subgraph ns [Namespaces]
-    Pid[pid]
-    Net[net]
-    Mnt[mnt]
-    Uts[uts]
-    User[user]
-  end
-  subgraph cg [cgroups]
-    CPU[cpu]
-    Mem[memory]
-    IO[io]
-  end
-  Container[Container] --> ns
-  Container --> cg
+mindmap
+  root((Container))
+    Namespaces what you see
+      pid
+      net
+      mnt
+      uts
+      user
+      ipc
+    cgroups what you may use
+      cpu
+      memory
+      io
+      pids
 ```
 
 ## Experiment

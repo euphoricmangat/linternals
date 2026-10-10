@@ -12,28 +12,27 @@ Every userspace pointer is **virtual**. The MMU and the kernel’s memory manage
 ## Layers
 
 ```mermaid
-flowchart TD
-  VA[Virtual address] --> PT[Page tables]
-  PT -->|hit| PA[Physical frame]
-  PT -->|miss / invalid| PF[Page fault handler]
-  PF -->|allocate / map / SIGSEGV| VA
+erDiagram
+  MM_STRUCT ||--o{ VMA : contains
+  VMA ||--o{ PAGE : maps
+  MM_STRUCT ||--|| PAGE_TABLES : owns
+  PAGE_TABLES ||--o{ PAGE : points-to
+  MM_STRUCT {
+    string pgd
+  }
+  VMA {
+    string vm_start
+    string vm_end
+    string vm_flags
+  }
+  PAGE {
+    string pfn
+  }
 ```
 
 ## Address space pieces
 
 A process `mm_struct` tracks regions (`vm_area_struct` / VMAs): text, heap, stacks, `mmap` mappings, and so on.
-
-```mermaid
-flowchart LR
-  subgraph AS[Process address space]
-    T[text / rodata]
-    H[heap]
-    M[mmap regions]
-    S[stack]
-  end
-  AS --> MM[mm_struct]
-  MM --> PG[page tables]
-```
 
 ## Page fault = opportunity
 
@@ -45,19 +44,20 @@ Faults are not only crashes. They implement:
 - **stack growth** (within limits)
 
 ```mermaid
-flowchart TD
-  Touch[CPU touches page] --> Walk[Walk page tables]
-  Walk -->|present| Done[Access succeeds]
-  Walk -->|not present| Fault[do_page_fault]
-  Fault --> Decide{Why missing?}
-  Decide -->|anon / demand| Alloc[Allocate frame]
-  Decide -->|file mmap| Read[Read from file]
-  Decide -->|COW| Copy[Copy page]
-  Decide -->|bad access| Kill[SIGSEGV]
-  Alloc --> Map[Install PTE]
-  Read --> Map
-  Copy --> Map
-  Map --> Done
+stateDiagram-v2
+  [*] --> Present: PTE valid
+  [*] --> Missing: PTE absent
+  Present --> [*]: access OK
+  Missing --> Fault: do_page_fault
+  Fault --> Alloc: anon / demand
+  Fault --> Read: file mmap
+  Fault --> Copy: COW
+  Fault --> Kill: bad access
+  Alloc --> Mapped
+  Read --> Mapped
+  Copy --> Mapped
+  Mapped --> [*]: retry access
+  Kill --> [*]
 ```
 
 ## Inspect your own map

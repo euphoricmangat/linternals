@@ -14,27 +14,38 @@ In userspace we say “process.” In the kernel, the central object is usually 
 Linux implements threads as tasks that share some resources (address space, file table, …). The `clone` flags decide what is shared.
 
 ```mermaid
-flowchart TB
-  subgraph process["Process (shared mm)"]
-    T1[task_struct thread 1]
-    T2[task_struct thread 2]
-  end
-  MM[mm_struct]
-  FS[files_struct]
-  T1 --> MM
-  T2 --> MM
-  T1 --> FS
-  T2 --> FS
+classDiagram
+  class task_struct {
+    +pid
+    +tgid
+    +mm
+    +files
+    +cred
+  }
+  class mm_struct {
+    +mmap VMAs
+    +pgd
+  }
+  class files_struct {
+    +fd table
+  }
+  task_struct --> mm_struct : mm
+  task_struct --> files_struct : files
+  task_struct "1..*" --> task_struct : threads share mm
 ```
 
 ## What fork sets in motion
 
 ```mermaid
-flowchart LR
-  P[Parent task] -->|copy / share| C[Child task]
-  P --> mmP[parent mm]
-  C --> mmC[child mm COW]
-  mmP -.->|copy-on-write| mmC
+sequenceDiagram
+  participant P as Parent task
+  participant K as Kernel
+  participant C as Child task
+  P->>K: fork / clone
+  K->>C: new task_struct
+  K->>C: mm copy-on-write
+  K-->>P: child pid
+  K-->>C: 0
 ```
 
 A classic `fork()` creates a new task with a copied (copy-on-write) address space. `execve()` later replaces that address space with a new program image.

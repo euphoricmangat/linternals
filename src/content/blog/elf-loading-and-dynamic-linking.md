@@ -24,6 +24,16 @@ sequenceDiagram
   Ld->>App: jump to entry
 ```
 
+```mermaid
+timeline
+  title execve stages
+  execve : Shell asks kernel to run a file
+  ELF load : Segments mapped
+  PT_INTERP : Dynamic linker starts
+  Relocate : Shared libs wired
+  Entry : Jump to main / _start
+```
+
 ## Useful commands
 
 ```bash

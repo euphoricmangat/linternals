@@ -24,6 +24,16 @@ sequenceDiagram
   K->>I: run /sbin/init (or systemd)
 ```
 
+```mermaid
+timeline
+  title Boot milestones
+  Power button : Firmware runs
+  Bootloader : Kernel image loaded
+  Early setup : setup_arch
+  start_kernel : Subsystems init
+  PID 1 : Userspace starts
+```
+
 ## Stages worth naming
 
 1. **Firmware** — UEFI/BIOS finds a bootloader (GRUB, systemd-boot, etc.).

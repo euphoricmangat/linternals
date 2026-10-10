@@ -86,6 +86,7 @@ sequenceDiagram
 
 - [Virtual memory walkthrough](/linternals/blog/virtual-memory-walkthrough/)
 - [Block layer and bio](/linternals/blog/block-layer-and-bio/)
+- [splice and sendfile](/linternals/blog/splice-and-sendfile/)
 - [Memory reclaim and OOM](/linternals/blog/memory-reclaim-and-oom/)
 - [VFS and the open path](/linternals/blog/vfs-and-the-open-path/)
 - [kernel.org — mm](https://docs.kernel.org/mm/index.html)

@@ -81,5 +81,6 @@ ls /sys/kernel/tracing 2>/dev/null | head
 ## Keep reading
 
 - [procfs, sysfs, and seeing the kernel](/linternals/blog/procfs-and-observability/)
+- [perf events intro](/linternals/blog/perf-events-intro/)
 - [Syscalls: crossing the boundary](/linternals/blog/syscalls-crossing-the-boundary/)
 - [kernel.org — BPF](https://docs.kernel.org/bpf/)

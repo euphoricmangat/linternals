@@ -84,4 +84,5 @@ EEVDF still cares about fairness, but eligibility and **virtual deadlines** refi
 ## Keep reading
 
 - [Anatomy of a Linux process](/linternals/blog/anatomy-of-a-linux-process/)
+- [SMP and CPU affinity](/linternals/blog/smp-and-cpu-affinity/)
 - [kernel.org — scheduler](https://docs.kernel.org/scheduler/)

@@ -69,5 +69,6 @@ findmnt | head -25
 ## Keep reading
 
 - [Namespaces and cgroups](/linternals/blog/namespaces-and-cgroups/)
+- [OverlayFS sketch](/linternals/blog/overlayfs-sketch/)
 - [VFS and the open path](/linternals/blog/vfs-and-the-open-path/)
 - [PID namespaces (deep)](/linternals/blog/pid-namespaces-deep/)

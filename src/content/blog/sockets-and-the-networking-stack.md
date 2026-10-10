@@ -42,5 +42,7 @@ flowchart LR
 ## Keep reading
 
 - [AF_UNIX sockets](/linternals/blog/af-unix-sockets/)
+- [TCP state machine sketch](/linternals/blog/tcp-state-machine-sketch/)
+- [epoll and event loops](/linternals/blog/epoll-and-event-loops/)
 - [kernel.org — networking docs](https://docs.kernel.org/networking/)
 - Related: [Syscalls: crossing the boundary](/linternals/blog/syscalls-crossing-the-boundary/)

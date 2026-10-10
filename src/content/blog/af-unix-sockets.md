@@ -71,5 +71,6 @@ cat /proc/net/unix | head -15
 ## Keep reading
 
 - [Sockets and the networking stack](/linternals/blog/sockets-and-the-networking-stack/)
+- [TCP state machine sketch](/linternals/blog/tcp-state-machine-sketch/)
 - [Syscalls: crossing the boundary](/linternals/blog/syscalls-crossing-the-boundary/)
 - [man 7 unix](https://man7.org/linux/man-pages/man7/unix.7.html)

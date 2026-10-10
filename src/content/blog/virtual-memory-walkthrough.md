@@ -100,6 +100,7 @@ head -n 40 /proc/$$/smaps
 
 ## Keep reading
 
+- [Page tables and the TLB](/linternals/blog/page-tables-and-tlb/)
 - [Slab allocator and kmalloc](/linternals/blog/slab-allocator-and-kmalloc/)
 - [Page cache and writeback](/linternals/blog/page-cache-and-writeback/)
 - [mmap and page faults (deep)](/linternals/blog/mmap-and-page-faults-deep/)

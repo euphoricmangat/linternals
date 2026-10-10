@@ -76,5 +76,6 @@ stat /
 
 - [ext4 on-disk sketch](/linternals/blog/ext4-on-disk-sketch/)
 - [Block layer and bio](/linternals/blog/block-layer-and-bio/)
+- [io_uring intro](/linternals/blog/io-uring-intro/)
 - [kernel.org — VFS](https://docs.kernel.org/filesystems/vfs.html)
 - Next: [Sockets and the networking stack](/linternals/blog/sockets-and-the-networking-stack/)

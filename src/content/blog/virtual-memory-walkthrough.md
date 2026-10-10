@@ -44,6 +44,22 @@ Faults are not only crashes. They implement:
 - **file-backed mmap** — bring file pages into RAM
 - **stack growth** (within limits)
 
+```mermaid
+flowchart TD
+  Touch[CPU touches page] --> Walk[Walk page tables]
+  Walk -->|present| Done[Access succeeds]
+  Walk -->|not present| Fault[do_page_fault]
+  Fault --> Decide{Why missing?}
+  Decide -->|anon / demand| Alloc[Allocate frame]
+  Decide -->|file mmap| Read[Read from file]
+  Decide -->|COW| Copy[Copy page]
+  Decide -->|bad access| Kill[SIGSEGV]
+  Alloc --> Map[Install PTE]
+  Read --> Map
+  Copy --> Map
+  Map --> Done
+```
+
 ## Inspect your own map
 
 ```bash

@@ -37,8 +37,21 @@ jobs:
       - name: Install
         run: npm install
 
+      - name: Normalize base path
+        id: base
+        run: |
+          BASE="${{ steps.pages.outputs.base_path }}"
+          if [ -z "$BASE" ] || [ "$BASE" = "/" ]; then
+            BASE="/"
+          else
+            BASE="/${BASE#/}"
+            BASE="${BASE%/}/"
+          fi
+          echo "path=$BASE" >> "$GITHUB_OUTPUT"
+          echo "Using base: $BASE"
+
       - name: Build
-        run: npx astro build --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.pages.outputs.base_path }}"
+        run: npx astro build --site "${{ steps.pages.outputs.origin }}" --base "${{ steps.base.outputs.path }}"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

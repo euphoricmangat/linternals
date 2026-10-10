@@ -13,6 +13,7 @@ const REPO_NAME = 'linternals';
 export default defineConfig({
 	site: `https://${GITHUB_USER}.github.io`,
 	base: `/${REPO_NAME}`,
+	trailingSlash: 'always',
 	integrations: [mdx(), sitemap()],
 	markdown: {
 		shikiConfig: {

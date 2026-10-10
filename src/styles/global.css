@@ -12,8 +12,8 @@
 	--line: rgba(26, 35, 50, 0.1);
 	--shadow: 0 12px 40px rgba(26, 35, 50, 0.08);
 	--radius: 4px;
-	--max: 720px;
-	--max-wide: 960px;
+	--max: 880px;
+	--max-wide: 1120px;
 }
 
 *,
@@ -133,7 +133,8 @@ pre > code {
 }
 
 .prose pre.mermaid,
-.prose .mermaid {
+.prose .mermaid,
+.mermaid {
 	background: var(--surface);
 	border: 1px solid var(--line);
 	border-radius: var(--radius);
@@ -142,6 +143,10 @@ pre > code {
 	overflow-x: auto;
 	box-shadow: var(--shadow);
 	text-align: center;
+}
+
+script.mermaid-source {
+	display: none;
 }
 
 .prose pre.mermaid code {

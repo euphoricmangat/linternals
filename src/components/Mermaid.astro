@@ -1,12 +1,56 @@
 ---
 /**
- * Client-side Mermaid renderer for ```mermaid fenced blocks.
+ * Client-side Mermaid renderer.
+ * Supports:
+ * - <script type="text/plain" class="mermaid-source">…</script> (Astro-safe)
+ * - Markdown ```mermaid fences (incl. Shiki wrappers)
+ * - legacy <pre class="mermaid">
  */
 ---
 
 <script>
+	function collectMermaidSources(): { node: Element; source: string }[] {
+		const found: { node: Element; source: string }[] = [];
+
+		document.querySelectorAll('script.mermaid-source[type="text/plain"]').forEach((el) => {
+			if ((el as HTMLElement).dataset.mermaidRendered === 'true') return;
+			found.push({ node: el, source: el.textContent ?? '' });
+		});
+
+		document.querySelectorAll('pre.mermaid').forEach((el) => {
+			if ((el as HTMLElement).dataset.mermaidRendered === 'true') return;
+			found.push({ node: el, source: el.textContent ?? '' });
+		});
+
+		document
+			.querySelectorAll(
+				'pre > code.language-mermaid, pre > code.mermaid, code[data-language="mermaid"]',
+			)
+			.forEach((el) => {
+				const pre = el.closest('pre') ?? el;
+				if ((pre as HTMLElement).dataset.mermaidRendered === 'true') return;
+				found.push({ node: pre, source: el.textContent ?? '' });
+			});
+
+		// Shiki / Astro often use class lists like "astro-code language-mermaid"
+		document.querySelectorAll('pre.astro-code').forEach((pre) => {
+			if ((pre as HTMLElement).dataset.mermaidRendered === 'true') return;
+			const cls = pre.className || '';
+			const code = pre.querySelector('code');
+			const lang =
+				pre.getAttribute('data-language') ||
+				code?.getAttribute('data-language') ||
+				code?.className ||
+				cls;
+			if (!/mermaid/i.test(String(lang))) return;
+			found.push({ node: pre, source: code?.textContent ?? pre.textContent ?? '' });
+		});
+
+		return found.filter((item) => item.source.trim().length > 0);
+	}
+
 	async function renderMermaid() {
-		const blocks = document.querySelectorAll('pre > code.language-mermaid, pre.mermaid');
+		const blocks = collectMermaidSources();
 		if (!blocks.length) return;
 
 		const mermaid = (await import('mermaid')).default;
@@ -34,19 +78,17 @@
 
 		const targets: HTMLElement[] = [];
 
-		blocks.forEach((el, i) => {
-			const pre = el.tagName === 'PRE' ? el : el.parentElement;
-			if (!pre || !(pre instanceof HTMLElement)) return;
-			if (pre.dataset.mermaidRendered === 'true') return;
+		blocks.forEach((item, i) => {
+			const host = item.node as HTMLElement;
+			if (host.dataset.mermaidRendered === 'true') return;
 
-			const source = el.tagName === 'CODE' ? (el.textContent ?? '') : (pre.textContent ?? '');
 			const container = document.createElement('div');
 			container.className = 'mermaid';
 			container.id = `mermaid-${i}-${Date.now()}`;
-			container.textContent = source.trim();
-			pre.replaceWith(container);
-			targets.push(container);
+			container.textContent = item.source.trim();
+			host.replaceWith(container);
 			container.dataset.mermaidRendered = 'true';
+			targets.push(container);
 		});
 
 		if (targets.length) {

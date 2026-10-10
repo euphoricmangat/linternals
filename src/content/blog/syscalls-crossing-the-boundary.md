@@ -35,6 +35,25 @@ sequenceDiagram
 4. A **syscall number** indexes a table of handlers (`sys_openat`, …).
 5. The handler runs with kernel privileges, then returns a value that libc maps to success or `errno`.
 
+## Syscall vs hardware interrupt
+
+Both enter the kernel, but for different reasons:
+
+```mermaid
+flowchart TB
+  subgraph user [Userspace]
+    App[Running app]
+  end
+  subgraph kern [Kernel]
+    Sys[Syscall entry]
+    Irq[IRQ / exception entry]
+    Work[Kernel work]
+  end
+  App -->|"intentional: syscall"| Sys --> Work
+  HW[Device / timer / fault] -->|"asynchronous"| Irq --> Work
+  Work --> App
+```
+
 ## Where to look in source
 
 | Piece | Typical location |

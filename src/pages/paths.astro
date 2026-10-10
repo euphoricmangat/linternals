@@ -28,14 +28,14 @@ import { withBase } from '../utils/url';
 			<section class="path animate-rise-delay">
 				<h2>Path A — From power-on to PID 1</h2>
 				<p>Follow the machine from firmware into the kernel and the first userspace process.</p>
-				<pre class="mermaid">
+				<script type="text/plain" class="mermaid-source">
 flowchart TD
   A[Firmware / UEFI] --> B[Bootloader]
   B --> C[Kernel decompress + setup]
   C --> D[start_kernel]
   D --> E[init / systemd]
   E --> F[Userspace]
-				</pre>
+				</script>
 				<ul>
 					<li><a href={withBase('blog/how-the-kernel-boots')}>How the kernel boots</a></li>
 					<li>
@@ -49,13 +49,13 @@ flowchart TD
 			<section class="path">
 				<h2>Path B — Process &amp; scheduler</h2>
 				<p>What is a task_struct, how does fork work, and who runs next?</p>
-				<pre class="mermaid">
+				<script type="text/plain" class="mermaid-source">
 flowchart LR
   fork[fork / clone] --> ts[task_struct]
   ts --> rq[runqueue]
   rq --> pick[pick_next_task]
   pick --> switch[context_switch]
-				</pre>
+				</script>
 				<ul>
 					<li><a href={withBase('blog/anatomy-of-a-linux-process')}>Anatomy of a Linux process</a></li>
 					<li>
@@ -69,7 +69,7 @@ flowchart LR
 			<section class="path">
 				<h2>Path C — Memory &amp; syscalls</h2>
 				<p>Cross the userspace/kernel boundary, then walk virtual memory.</p>
-				<pre class="mermaid">
+				<script type="text/plain" class="mermaid-source">
 sequenceDiagram
   participant App
   participant libc
@@ -78,7 +78,7 @@ sequenceDiagram
   libc->>Kernel: syscall
   Kernel-->>libc: fd / errno
   libc-->>App: return
-				</pre>
+				</script>
 				<ul>
 					<li><a href={withBase('blog/syscalls-crossing-the-boundary')}>Syscalls: crossing the boundary</a></li>
 					<li><a href={withBase('blog/virtual-memory-walkthrough')}>Virtual memory walkthrough</a></li>

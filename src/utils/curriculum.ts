@@ -6,6 +6,9 @@ export const CURRICULUM_ORDER = [
 	'syscalls-crossing-the-boundary',
 	'virtual-memory-walkthrough',
 	'page-cache-and-writeback',
+	'block-layer-and-bio',
+	'mmap-and-page-faults-deep',
+	'memory-reclaim-and-oom',
 	'scheduler-cfs-and-eevdf',
 	'elf-loading-and-dynamic-linking',
 	'vfs-and-the-open-path',
@@ -13,9 +16,11 @@ export const CURRICULUM_ORDER = [
 	'sockets-and-the-networking-stack',
 	'interrupts-softirqs-and-tasklets',
 	'locks-spinlocks-mutexes-rcu',
+	'futexes-userspace-to-kernel',
 	'kernel-modules-and-device-model',
 	'namespaces-and-cgroups',
 	'procfs-and-observability',
+	'bpf-and-tracing-intro',
 	'reading-kernel-source',
 ] as const;
 

@@ -101,4 +101,6 @@ head -n 40 /proc/$$/smaps
 ## Keep reading
 
 - [Page cache and writeback](/linternals/blog/page-cache-and-writeback/)
+- [mmap and page faults (deep)](/linternals/blog/mmap-and-page-faults-deep/)
+- [Memory reclaim and OOM](/linternals/blog/memory-reclaim-and-oom/)
 - [kernel.org — Memory Management](https://docs.kernel.org/mm/index.html)

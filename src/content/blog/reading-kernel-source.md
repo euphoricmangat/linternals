@@ -69,6 +69,7 @@ mindmap
 
 ## Keep reading
 
+- [Reading an oops](/linternals/blog/reading-an-oops/)
 - [https://elixir.bootlin.com/linux/latest/source](https://elixir.bootlin.com/linux/latest/source)
 - [https://docs.kernel.org/](https://docs.kernel.org/)
 - Back to: [Learning paths](/linternals/paths/)

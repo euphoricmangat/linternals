@@ -74,6 +74,7 @@ PY
 
 ## Keep reading
 
+- [vDSO and vsyscall](/linternals/blog/vdso-and-vsyscall/)
 - [Interrupts, softirqs, and bottom halves](/linternals/blog/interrupts-softirqs-and-tasklets/)
 - [Scheduler: CFS and EEVDF](/linternals/blog/scheduler-cfs-and-eevdf/)
 - [kernel.org — timers](https://docs.kernel.org/timers/)

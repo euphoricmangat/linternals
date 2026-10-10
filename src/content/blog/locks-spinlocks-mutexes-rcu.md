@@ -39,6 +39,7 @@ sequenceDiagram
 
 ## Keep reading
 
+- [RCU grace periods](/linternals/blog/rcu-grace-periods/)
 - [Futexes: userspace to kernel](/linternals/blog/futexes-userspace-to-kernel/)
 - [kernel.org — locking](https://docs.kernel.org/locking/)
 - [kernel.org — RCU](https://docs.kernel.org/RCU/)

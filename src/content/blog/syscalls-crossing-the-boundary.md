@@ -100,6 +100,7 @@ Once you can name the syscall, you can grep the kernel for `SYSCALL_DEFINE` and 
 ## Keep reading
 
 - [man 2 syscalls](https://man7.org/linux/man-pages/man2/syscalls.2.html)
+- [vDSO and vsyscall](/linternals/blog/vdso-and-vsyscall/)
 - [epoll and event loops](/linternals/blog/epoll-and-event-loops/)
 - [io_uring intro](/linternals/blog/io-uring-intro/)
 - Next: [Virtual memory walkthrough](/linternals/blog/virtual-memory-walkthrough/)

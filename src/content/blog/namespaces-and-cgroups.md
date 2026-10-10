@@ -45,6 +45,7 @@ cat /proc/$$/cgroup
 ## Keep reading
 
 - [PID namespaces (deep)](/linternals/blog/pid-namespaces-deep/)
+- [Mount namespaces and bind mounts](/linternals/blog/mount-namespaces-and-bind-mounts/)
 - [cgroup v2 controllers](/linternals/blog/cgroup-v2-controllers/)
 - [Capabilities and LSM intro](/linternals/blog/capabilities-and-lsm-intro/)
 - [seccomp-BPF intro](/linternals/blog/seccomp-bpf-intro/)

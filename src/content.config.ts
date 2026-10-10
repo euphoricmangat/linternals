@@ -27,6 +27,7 @@ const blog = defineCollection({
 					'containers',
 					'drivers',
 					'elf',
+					'security',
 				])
 				.optional(),
 			difficulty: z.enum(['intro', 'intermediate', 'deep']).default('intro'),

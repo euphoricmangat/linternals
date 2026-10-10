@@ -41,5 +41,6 @@ flowchart LR
 
 ## Keep reading
 
+- [AF_UNIX sockets](/linternals/blog/af-unix-sockets/)
 - [kernel.org — networking docs](https://docs.kernel.org/networking/)
 - Related: [Syscalls: crossing the boundary](/linternals/blog/syscalls-crossing-the-boundary/)

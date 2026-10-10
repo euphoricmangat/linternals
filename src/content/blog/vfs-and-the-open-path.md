@@ -74,5 +74,7 @@ stat /
 
 ## Keep reading
 
+- [ext4 on-disk sketch](/linternals/blog/ext4-on-disk-sketch/)
+- [Block layer and bio](/linternals/blog/block-layer-and-bio/)
 - [kernel.org — VFS](https://docs.kernel.org/filesystems/vfs.html)
 - Next: [Sockets and the networking stack](/linternals/blog/sockets-and-the-networking-stack/)

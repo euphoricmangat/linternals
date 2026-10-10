@@ -39,5 +39,6 @@ cat /proc/softirqs
 
 ## Keep reading
 
+- [Timers and timekeeping](/linternals/blog/timers-and-timekeeping/)
 - [kernel.org — IRQ](https://docs.kernel.org/core-api/genericirq.html)
 - Related: [Locks: spinlocks, mutexes, RCU](/linternals/blog/locks-spinlocks-mutexes-rcu/)

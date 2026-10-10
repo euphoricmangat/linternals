@@ -44,4 +44,5 @@ cat /proc/$$/cgroup
 
 ## Keep reading
 
+- [Capabilities and LSM intro](/linternals/blog/capabilities-and-lsm-intro/)
 - Related: [Anatomy of a Linux process](/linternals/blog/anatomy-of-a-linux-process/)

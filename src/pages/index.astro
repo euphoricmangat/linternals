@@ -1,0 +1,208 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+import Mermaid from '../components/Mermaid.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { withBase } from '../utils/url';
+
+const posts = (await getCollection('blog'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 4);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main class="home">
+			<section class="hero">
+				<p class="eyebrow animate-rise">personal linux lab notebook</p>
+				<h1 class="brand-hero animate-rise">
+					<span class="lambda" aria-hidden="true">λ</span>
+					Linternals
+				</h1>
+				<p class="tagline animate-rise-delay">
+					Learn Linux internals and kernel source the hard way — diagrams, call paths, and
+					open notes you can host for free on GitHub Pages.
+				</p>
+				<div class="cta animate-rise-delay-2">
+					<a class="btn" href={withBase('blog')}>Read the notes</a>
+					<a class="btn btn-ghost" href={withBase('paths')}>Learning paths</a>
+				</div>
+			</section>
+
+			<section class="diagram animate-rise-delay-2">
+				<h2>The map at a glance</h2>
+				<p>Everything on this site orbits one idea: follow the path from userspace into the kernel.</p>
+				<pre class="mermaid">
+flowchart LR
+  U[Userspace] -->|syscall| K[Kernel]
+  K --> MM[Memory]
+  K --> FS[VFS / FS]
+  K --> NET[Networking]
+  K --> SCH[Scheduler]
+  K --> DRV[Drivers]
+				</pre>
+			</section>
+
+			<section class="recent">
+				<div class="section-head">
+					<h2>Latest notes</h2>
+					<a href={withBase('blog')}>View all</a>
+				</div>
+				<ul>
+					{
+						posts.map((post) => (
+							<li>
+								<a href={withBase(`blog/${post.id}`)}>
+									<div class="post-meta">
+										<FormattedDate date={post.data.pubDate} />
+										{post.data.topic && <span class="tag">{post.data.topic}</span>}
+									</div>
+									<h3>{post.data.title}</h3>
+									<p>{post.data.description}</p>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+		</main>
+		<Footer />
+		<Mermaid />
+	</body>
+</html>
+
+<style>
+	.home {
+		width: var(--max-wide);
+		max-width: calc(100% - 2em);
+	}
+	.hero {
+		padding: 3.5rem 0 2.5rem;
+		max-width: 38rem;
+	}
+	.eyebrow {
+		font-family: var(--font-mono), monospace;
+		font-size: 0.78rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--accent-deep);
+		margin: 0 0 1rem;
+	}
+	.brand-hero {
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+		font-size: clamp(3rem, 10vw, 4.75rem);
+		margin: 0 0 1rem;
+		line-height: 1;
+	}
+	.lambda {
+		display: grid;
+		place-items: center;
+		width: 0.85em;
+		height: 0.85em;
+		background: var(--accent);
+		color: #fff;
+		font-family: var(--font-mono), monospace;
+		font-size: 0.55em;
+		border-radius: 6px;
+		box-shadow: 4px 4px 0 var(--accent-deep);
+		animation: rise 0.8s ease both;
+	}
+	.tagline {
+		font-size: 1.2rem;
+		color: var(--ink-muted);
+		margin: 0 0 1.75rem;
+		line-height: 1.55;
+	}
+	.cta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+	.diagram {
+		margin: 1rem 0 3rem;
+		padding: 1.75rem;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		box-shadow: var(--shadow);
+	}
+	.diagram h2 {
+		margin-top: 0;
+	}
+	.diagram p {
+		color: var(--ink-muted);
+		margin-bottom: 0.5rem;
+	}
+	.section-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		margin-bottom: 1.25rem;
+	}
+	.section-head h2 {
+		margin: 0;
+	}
+	.section-head a {
+		font-size: 0.9rem;
+		font-weight: 600;
+		text-decoration: none;
+	}
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 0.85rem;
+	}
+	li a {
+		display: block;
+		padding: 1.15rem 1.25rem;
+		background: rgba(255, 255, 255, 0.72);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		text-decoration: none;
+		color: inherit;
+		transition:
+			border-color 0.2s ease,
+			transform 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+	li a:hover {
+		border-color: var(--accent);
+		transform: translateY(-2px);
+		box-shadow: var(--shadow);
+	}
+	.post-meta {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+		font-family: var(--font-mono), monospace;
+		font-size: 0.75rem;
+		color: var(--ink-muted);
+		margin-bottom: 0.35rem;
+	}
+	li h3 {
+		margin: 0 0 0.35rem;
+		font-size: 1.25rem;
+	}
+	li p {
+		margin: 0;
+		color: var(--ink-muted);
+		font-size: 0.95rem;
+	}
+	@media (max-width: 640px) {
+		.hero {
+			padding-top: 2rem;
+		}
+	}
+</style>

@@ -1,0 +1,55 @@
+---
+import { SITE_AUTHOR, SITE_TITLE, GITHUB_REPO } from '../consts';
+import { withBase } from '../utils/url';
+
+const today = new Date();
+---
+
+<footer>
+	<div class="footer-inner">
+		<p>
+			<span class="mark">λ</span>
+			<strong>{SITE_TITLE}</strong> — notes from the kernel trenches.
+		</p>
+		<p class="meta">
+			&copy; {today.getFullYear()}
+			{SITE_AUTHOR}. Free on
+			<a href={GITHUB_REPO} target="_blank" rel="noopener noreferrer">GitHub Pages</a>.
+			<a href={withBase('rss.xml')}>RSS</a>
+		</p>
+	</div>
+</footer>
+
+<style>
+	footer {
+		border-top: 1px solid var(--line);
+		padding: 2.5rem 1.25rem 3.5rem;
+		margin-top: auto;
+	}
+	.footer-inner {
+		max-width: var(--max-wide);
+		margin: 0 auto;
+		text-align: center;
+		color: var(--ink-muted);
+		font-size: 0.92rem;
+	}
+	.mark {
+		display: inline-grid;
+		place-items: center;
+		width: 1.2rem;
+		height: 1.2rem;
+		background: var(--accent);
+		color: #fff;
+		font-family: var(--font-mono), monospace;
+		font-size: 0.75rem;
+		border-radius: 2px;
+		vertical-align: middle;
+		margin-right: 0.25rem;
+	}
+	.meta {
+		margin-top: 0.5rem;
+	}
+	a {
+		color: var(--accent-deep);
+	}
+</style>

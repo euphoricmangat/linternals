@@ -1,0 +1,59 @@
+---
+/**
+ * Client-side Mermaid renderer for ```mermaid fenced blocks.
+ */
+---
+
+<script>
+	async function renderMermaid() {
+		const blocks = document.querySelectorAll('pre > code.language-mermaid, pre.mermaid');
+		if (!blocks.length) return;
+
+		const mermaid = (await import('mermaid')).default;
+
+		mermaid.initialize({
+			startOnLoad: false,
+			theme: 'base',
+			securityLevel: 'loose',
+			fontFamily: 'IBM Plex Sans, system-ui, sans-serif',
+			themeVariables: {
+				primaryColor: '#d8efe8',
+				primaryTextColor: '#1a2332',
+				primaryBorderColor: '#0e7c66',
+				lineColor: '#4a5a6a',
+				secondaryColor: '#e8eef0',
+				tertiaryColor: '#f3f6f4',
+				background: '#ffffff',
+				mainBkg: '#d8efe8',
+				nodeBorder: '#0e7c66',
+				clusterBkg: '#f3f6f4',
+				titleColor: '#1a2332',
+				edgeLabelBackground: '#ffffff',
+			},
+		});
+
+		const targets: HTMLElement[] = [];
+
+		blocks.forEach((el, i) => {
+			const pre = el.tagName === 'PRE' ? el : el.parentElement;
+			if (!pre || !(pre instanceof HTMLElement)) return;
+			if (pre.dataset.mermaidRendered === 'true') return;
+
+			const source = el.tagName === 'CODE' ? (el.textContent ?? '') : (pre.textContent ?? '');
+			const container = document.createElement('div');
+			container.className = 'mermaid';
+			container.id = `mermaid-${i}-${Date.now()}`;
+			container.textContent = source.trim();
+			pre.replaceWith(container);
+			targets.push(container);
+			container.dataset.mermaidRendered = 'true';
+		});
+
+		if (targets.length) {
+			await mermaid.run({ nodes: targets });
+		}
+	}
+
+	renderMermaid();
+	document.addEventListener('astro:page-load', renderMermaid);
+</script>

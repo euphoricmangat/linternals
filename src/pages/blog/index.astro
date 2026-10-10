@@ -1,0 +1,117 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { SITE_DESCRIPTION } from '../../consts';
+import { withBase } from '../../utils/url';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="Posts" description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<header class="page-head animate-rise">
+				<h1>Posts</h1>
+				<p>Open notes on Linux internals, kernel paths, and how the pieces fit together.</p>
+			</header>
+			<ul class="post-list">
+				{
+					posts.map((post, i) => (
+						<li class="animate-rise" style={`animation-delay: ${0.05 * i}s`}>
+							<a href={withBase(`blog/${post.id}`)}>
+								<div class="row">
+									<span class="date">
+										<FormattedDate date={post.data.pubDate} />
+									</span>
+									<div class="body">
+										<div class="tags">
+											{post.data.difficulty && <span class="tag">{post.data.difficulty}</span>}
+											{post.data.topic && <span class="tag">{post.data.topic}</span>}
+										</div>
+										<h2>{post.data.title}</h2>
+										<p>{post.data.description}</p>
+									</div>
+								</div>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	main {
+		width: var(--max-wide);
+		max-width: calc(100% - 2em);
+	}
+	.page-head {
+		margin-bottom: 2rem;
+	}
+	.page-head p {
+		color: var(--ink-muted);
+		max-width: 36rem;
+	}
+	.post-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+	.post-list a {
+		display: block;
+		text-decoration: none;
+		color: inherit;
+		padding: 1.25rem 1.35rem;
+		background: rgba(255, 255, 255, 0.75);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		transition:
+			border-color 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+	.post-list a:hover {
+		border-color: var(--accent);
+		box-shadow: var(--shadow);
+	}
+	.row {
+		display: grid;
+		grid-template-columns: 7.5rem 1fr;
+		gap: 1rem;
+	}
+	.date {
+		font-family: var(--font-mono), monospace;
+		font-size: 0.78rem;
+		color: var(--ink-muted);
+		padding-top: 0.35rem;
+	}
+	.body h2 {
+		margin: 0.35rem 0 0.4rem;
+		font-size: 1.35rem;
+	}
+	.body p {
+		margin: 0;
+		color: var(--ink-muted);
+		font-size: 0.95rem;
+	}
+	@media (max-width: 640px) {
+		.row {
+			grid-template-columns: 1fr;
+			gap: 0.35rem;
+		}
+	}
+</style>

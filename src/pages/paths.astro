@@ -1,0 +1,115 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Mermaid from '../components/Mermaid.astro';
+import { withBase } from '../utils/url';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title="Learning paths"
+			description="Suggested routes through Linux internals — from boot to memory, syscalls, and reading kernel source."
+		/>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<header class="page-head animate-rise">
+				<h1>Learning paths</h1>
+				<p>
+					Pick a trail. Each path points at notes on this site and classic open sources (kernel
+					docs, LWN, man pages) so you can learn without paying for a course.
+				</p>
+			</header>
+
+			<section class="path animate-rise-delay">
+				<h2>Path A — From power-on to PID 1</h2>
+				<p>Follow the machine from firmware into the kernel and the first userspace process.</p>
+				<pre class="mermaid">
+flowchart TD
+  A[Firmware / UEFI] --> B[Bootloader]
+  B --> C[Kernel decompress + setup]
+  C --> D[start_kernel]
+  D --> E[init / systemd]
+  E --> F[Userspace]
+				</pre>
+				<ul>
+					<li><a href={withBase('blog/how-the-kernel-boots')}>How the kernel boots</a></li>
+					<li>
+						External: <a href="https://docs.kernel.org/admin-guide/init.html" target="_blank" rel="noopener"
+							>kernel.org — init</a
+						>
+					</li>
+				</ul>
+			</section>
+
+			<section class="path">
+				<h2>Path B — Process &amp; scheduler</h2>
+				<p>What is a task_struct, how does fork work, and who runs next?</p>
+				<pre class="mermaid">
+flowchart LR
+  fork[fork / clone] --> ts[task_struct]
+  ts --> rq[runqueue]
+  rq --> pick[pick_next_task]
+  pick --> switch[context_switch]
+				</pre>
+				<ul>
+					<li><a href={withBase('blog/anatomy-of-a-linux-process')}>Anatomy of a Linux process</a></li>
+					<li>
+						External: <a href="https://docs.kernel.org/scheduler/" target="_blank" rel="noopener"
+							>kernel.org — scheduler</a
+						>
+					</li>
+				</ul>
+			</section>
+
+			<section class="path">
+				<h2>Path C — Memory &amp; syscalls</h2>
+				<p>Cross the userspace/kernel boundary, then walk virtual memory.</p>
+				<pre class="mermaid">
+sequenceDiagram
+  participant App
+  participant libc
+  participant Kernel
+  App->>libc: open(...)
+  libc->>Kernel: syscall
+  Kernel-->>libc: fd / errno
+  libc-->>App: return
+				</pre>
+				<ul>
+					<li><a href={withBase('blog/syscalls-crossing-the-boundary')}>Syscalls: crossing the boundary</a></li>
+					<li><a href={withBase('blog/virtual-memory-walkthrough')}>Virtual memory walkthrough</a></li>
+					<li><a href={withBase('blog/reading-kernel-source')}>Reading kernel source: where to start</a></li>
+				</ul>
+			</section>
+		</main>
+		<Footer />
+		<Mermaid />
+	</body>
+</html>
+
+<style>
+	main {
+		width: var(--max);
+		max-width: calc(100% - 2em);
+	}
+	.page-head p {
+		color: var(--ink-muted);
+	}
+	.path {
+		margin: 2.5rem 0;
+		padding: 1.5rem;
+		background: rgba(255, 255, 255, 0.8);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+	}
+	.path h2 {
+		margin-top: 0;
+	}
+	.path p {
+		color: var(--ink-muted);
+	}
+</style>

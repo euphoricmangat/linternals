@@ -1,0 +1,70 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { GITHUB_REPO } from '../consts';
+import { withBase } from '../utils/url';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title="About"
+			description="What Linternals is, how it is built, and how to host it on GitHub Pages for free."
+		/>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<header class="page-head animate-rise">
+				<h1>About Linternals</h1>
+				<p>
+					A personal static site for learning Linux internals — kernel paths, diagrams, and open
+					references — built with Astro and hosted on GitHub Pages at zero cost.
+				</p>
+			</header>
+
+			<section class="prose animate-rise-delay">
+				<h2>What lives here</h2>
+				<ul>
+					<li>Notes that explain <em>how</em> Linux works, not only how to use commands</li>
+					<li>Mermaid diagrams for call flows, boot sequences, and memory layouts</li>
+					<li>Links into kernel documentation and other free primary sources</li>
+					<li>Markdown posts you can edit locally and publish with <code>git push</code></li>
+				</ul>
+
+				<h2>Stack</h2>
+				<ul>
+					<li><strong>Astro</strong> — static HTML, MD/MDX content collections</li>
+					<li><strong>Mermaid</strong> — diagrams in fenced <code>```mermaid</code> blocks</li>
+					<li><strong>GitHub Actions + Pages</strong> — free hosting from this repo</li>
+				</ul>
+
+				<h2>Write a new note</h2>
+				<ol>
+					<li>Add a file under <code>src/content/blog/</code></li>
+					<li>Fill in frontmatter (<code>title</code>, <code>description</code>, <code>pubDate</code>, optional <code>tags</code> / <code>topic</code>)</li>
+					<li>Use Mermaid fences for diagrams</li>
+					<li>Run <code>npm run dev</code>, then push to <code>main</code></li>
+				</ol>
+
+				<p>
+					<a class="btn" href={GITHUB_REPO} target="_blank" rel="noopener noreferrer">Open the repo</a>
+					<a class="btn btn-ghost" href={withBase('blog')} style="margin-left: 0.5rem">Browse posts</a>
+				</p>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.page-head p {
+		color: var(--ink-muted);
+		max-width: 36rem;
+	}
+	.prose :global(.btn) {
+		margin-top: 0.5rem;
+	}
+</style>

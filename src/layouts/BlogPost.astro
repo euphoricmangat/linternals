@@ -1,0 +1,107 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+import Mermaid from '../components/Mermaid.astro';
+import { withBase } from '../utils/url';
+
+type Props = CollectionEntry<'blog'>['data'];
+
+const { title, description, pubDate, updatedDate, tags = [], topic, difficulty } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<article class="prose">
+				<header class="post-header animate-rise">
+					<div class="meta-row">
+						<FormattedDate date={pubDate} />
+						{
+							updatedDate && (
+								<span class="updated">
+									· updated <FormattedDate date={updatedDate} />
+								</span>
+							)
+						}
+						{difficulty && <span class="tag">{difficulty}</span>}
+						{topic && <span class="tag">{topic}</span>}
+					</div>
+					<h1>{title}</h1>
+					<p class="lede">{description}</p>
+					{
+						tags.length > 0 && (
+							<div class="tags">
+								{tags.map((tag) => (
+									<span class="tag">{tag}</span>
+								))}
+							</div>
+						)
+					}
+					<div class="rule" aria-hidden="true"></div>
+				</header>
+				<div class="content animate-rise-delay">
+					<slot />
+				</div>
+				<p class="back">
+					<a href={withBase('blog')}>&larr; All posts</a>
+				</p>
+			</article>
+		</main>
+		<Footer />
+		<Mermaid />
+	</body>
+</html>
+
+<style>
+	main {
+		width: var(--max);
+		max-width: calc(100% - 2em);
+	}
+	.post-header {
+		margin-bottom: 2rem;
+	}
+	.meta-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+		font-family: var(--font-mono), monospace;
+		font-size: 0.8rem;
+		color: var(--ink-muted);
+		margin-bottom: 0.85rem;
+	}
+	.lede {
+		color: var(--ink-muted);
+		font-size: 1.15rem;
+		margin: 0.75rem 0 1rem;
+	}
+	.tags {
+		margin-bottom: 1rem;
+	}
+	.rule {
+		height: 2px;
+		background: linear-gradient(90deg, var(--accent), transparent);
+		margin-top: 1.25rem;
+	}
+	.content :global(h2)::before {
+		content: '// ';
+		font-family: var(--font-mono), monospace;
+		color: var(--accent);
+		font-weight: 500;
+		font-size: 0.7em;
+	}
+	.back {
+		margin-top: 3rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--line);
+		font-size: 0.95rem;
+	}
+</style>

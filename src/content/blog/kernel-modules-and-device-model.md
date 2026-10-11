@@ -31,5 +31,6 @@ ls /sys/bus
 
 ## Keep reading
 
+- [DMA API sketch](/linternals/blog/dma-api-sketch/)
 - [kernel.org — driver model](https://docs.kernel.org/driver-api/driver-model/)
 - Related: [Reading kernel source](/linternals/blog/reading-kernel-source/)

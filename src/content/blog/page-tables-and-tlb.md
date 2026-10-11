@@ -78,4 +78,5 @@ grep -E 'AnonHugePages|KernelPageSize' /proc/$$/smaps | head -10
 
 - [Virtual memory walkthrough](/linternals/blog/virtual-memory-walkthrough/)
 - [mmap and page faults (deep)](/linternals/blog/mmap-and-page-faults-deep/)
+- [Hugepages and THP](/linternals/blog/hugepages-and-thp/)
 - [Slab allocator and kmalloc](/linternals/blog/slab-allocator-and-kmalloc/)

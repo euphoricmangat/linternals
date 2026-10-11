@@ -70,5 +70,6 @@ perf stat -e cycles,instructions,cache-misses -- sleep 0.2 2>&1 | tail -20
 ## Keep reading
 
 - [BPF and tracing intro](/linternals/blog/bpf-and-tracing-intro/)
+- [kprobes and ftrace](/linternals/blog/kprobes-and-ftrace/)
 - [procfs and observability](/linternals/blog/procfs-and-observability/)
 - [Reading an oops](/linternals/blog/reading-an-oops/)

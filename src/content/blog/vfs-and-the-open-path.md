@@ -78,6 +78,7 @@ stat /
 - [OverlayFS sketch](/linternals/blog/overlayfs-sketch/)
 - [Block layer and bio](/linternals/blog/block-layer-and-bio/)
 - [splice and sendfile](/linternals/blog/splice-and-sendfile/)
+- [fcntl locks and leases](/linternals/blog/fcntl-locks-and-leases/)
 - [io_uring intro](/linternals/blog/io-uring-intro/)
 - [kernel.org — VFS](https://docs.kernel.org/filesystems/vfs.html)
 - Next: [Sockets and the networking stack](/linternals/blog/sockets-and-the-networking-stack/)

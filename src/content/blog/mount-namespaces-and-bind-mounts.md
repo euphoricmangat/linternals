@@ -16,10 +16,10 @@ flowchart TB
   Host[Host mnt ns]
   Cont[Container mnt ns]
   Host -->|clone NEWNS| Cont
-  Cont --> Root[/]
-  Root --> App[/app]
-  Root --> Proc[/proc]
-  Host --> Real[/var/lib/container/rootfs]
+  Cont --> Root["/"]
+  Root --> App["/app"]
+  Root --> Proc["/proc"]
+  Host --> Real["/var/lib/container/rootfs"]
   Real -.->|bind| Root
 ```
 

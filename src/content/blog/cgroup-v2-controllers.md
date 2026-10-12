@@ -13,10 +13,10 @@ tags: ['cgroup', 'cgroupv2', 'memory', 'cpu']
 
 ```mermaid
 flowchart TB
-  Root[/sys/fs/cgroup]
+  Root["/sys/fs/cgroup"]
   Root --> Sys[system.slice]
   Root --> User[user.slice]
-  Root --> Cont[container.slice / runtime]
+  Root --> Cont["container.slice / runtime"]
   Cont --> JobA[app.scope]
   Cont --> JobB[other.scope]
 ```

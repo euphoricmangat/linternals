@@ -38,7 +38,7 @@ flowchart TD
   Dev --> Match[bus match]
   Drv --> Match
   Match --> Probe[probe]
-  Probe --> Sysfs[/sys entries]
+  Probe --> Sysfs["/sys entries"]
 ```
 
 1. **Firmware / enumeration** discovers hardware (PCI BARs, USB descriptors, DT / ACPI nodes) and registers a `struct device` on a bus.

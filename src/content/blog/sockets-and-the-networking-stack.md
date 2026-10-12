@@ -2,12 +2,13 @@
 title: 'Sockets and the networking stack'
 description: 'From socket() to sk_buff — how packets climb the TCP/IP stack inside Linux.'
 pubDate: 2026-04-12
+updatedDate: 2026-10-12
 topic: networking
 difficulty: intermediate
 tags: ['socket', 'tcp', 'skb', 'net']
 ---
 
-Networking in Linux is layered: sockets for apps, protocols in `net/`, and drivers that push frames to hardware.
+Networking in Linux is layered: the **socket API** for applications, protocol implementations under `net/`, and drivers that move frames through hardware. Understanding one vertical slice — “send a TCP byte” or “receive a UDP datagram” — unlocks most of the rest.
 
 ## Layers
 
@@ -20,9 +21,20 @@ flowchart TD
   Netdev --> NIC[Driver / NIC]
 ```
 
-## Packet carrier: sk_buff
+Userspace sees an `fd`. Inside the kernel that fd refers to a `struct socket` wrapping a protocol-specific `struct sock` (`tcp_sock`, …). Syscalls like `sendmsg` / `recvmsg` land in `net/socket.c` and dispatch through protocol operation tables.
 
-Almost every packet is an `sk_buff` (skb): headers, payload references, and metadata that travel up and down the stack.
+## Outbound sketch (TCP)
+
+1. App calls `send` / `write` / `sendmsg`.
+2. Kernel copies (or zero-copies) data into socket send buffers — subject to `SO_SNDBUF` and congestion window.
+3. TCP builds segments, attaches headers, hands `sk_buff`s to IP.
+4. IP routes, sets L3 headers, passes to the egress `net_device`.
+5. Driver DMA-maps buffers and rings the NIC doorbell.
+6. Completions free or recycle skbs later (NAPI / TX reclaim).
+
+Local delivery (same host) short-circuits through the stack without a physical NIC — still using skbs and softirqs.
+
+## Inbound sketch
 
 ```mermaid
 flowchart LR
@@ -33,11 +45,57 @@ flowchart LR
   SockRecv --> Read[read / recvmsg]
 ```
 
+1. NIC DMAs a frame; hard IRQ schedules **NAPI**.
+2. Softirq / NAPI builds or fills an `sk_buff`, may run GRO.
+3. Protocol demux (ethertype → IP → L4 port / tuple).
+4. Packet lands on a socket receive queue; sleeping receivers wake; `epoll` sees readability.
+
+Details of TCP states: [TCP state machine sketch](/linternals/blog/tcp-state-machine-sketch/). Driver RX: [NAPI and softnet](/linternals/blog/napi-and-softnet/).
+
+## Packet carrier: sk_buff
+
+Almost every packet is an **`sk_buff` (skb)**: linear data and/or page fragments, header offsets, checksum state, and metadata (device, skb mark, clone flags). Cloning and sharing matter for performance — and for bugs when a layer mutates a shared skb incorrectly.
+
+Filters and policy hit the path via **netfilter** hooks ([Netfilter hooks sketch](/linternals/blog/netfilter-and-hooks-sketch/)) and eBPF programs on tc/XDP/cgroup attachments.
+
+## Not everything is TCP/IP
+
+- **UDP** — datagrams, simpler queues, still skbs.
+- **AF_UNIX** — local IPC with the socket API ([AF_UNIX sockets](/linternals/blog/af-unix-sockets/)).
+- **Raw / packet sockets** — observability and custom protocols; privileged.
+
 ## Source landmarks
 
-- `net/socket.c` — syscall side
-- `net/ipv4/` — IPv4 / TCP
-- `include/linux/skbuff.h` — skb
+| Piece | Where |
+| --- | --- |
+| Syscall side | `net/socket.c` |
+| IPv4 / TCP | `net/ipv4/` |
+| sk_buff | `include/linux/skbuff.h`, `net/core/skbuff.c` |
+| Device core | `net/core/dev.c` |
+
+## Lab — Watch sockets
+
+<div class="lab">
+
+### Lab — `ss` and a little structure
+
+```bash
+ss -tulpn | head -25
+ss -ti | head -15
+# Kernel tables (no process names):
+head -5 /proc/net/tcp
+```
+
+**Expect:** listening and established sockets; `-ti` adds TCP internals (cwnd, rtt) when available; `/proc/net/tcp` shows hex addresses and state codes.
+
+</div>
+
+## Pitfalls
+
+- **Buffer bloat vs drops** — huge `SO_RCVBUF` can hide backpressure; tiny buffers cause app-level retries.
+- **Blocking vs edge-triggered epoll** — must drain until `EAGAIN` on ET ([epoll and event loops](/linternals/blog/epoll-and-event-loops/)).
+- **Checksum offload** — skbs may defer checksums; capturing tools can look “wrong” until realized.
+- **Namespaces** — each netns has its own interfaces and sockets ([Network namespaces and veth](/linternals/blog/netns-and-veth/)).
 
 ## Keep reading
 
@@ -45,5 +103,6 @@ flowchart LR
 - [TCP state machine sketch](/linternals/blog/tcp-state-machine-sketch/)
 - [NAPI and softnet](/linternals/blog/napi-and-softnet/)
 - [epoll and event loops](/linternals/blog/epoll-and-event-loops/)
+- [Netfilter hooks sketch](/linternals/blog/netfilter-and-hooks-sketch/)
 - [kernel.org — networking docs](https://docs.kernel.org/networking/)
 - Related: [Syscalls: crossing the boundary](/linternals/blog/syscalls-crossing-the-boundary/)

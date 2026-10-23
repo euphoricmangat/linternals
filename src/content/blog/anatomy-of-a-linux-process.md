@@ -2,6 +2,7 @@
 title: 'Anatomy of a Linux process'
 description: 'task_struct, threads, and what fork actually copies — the kernel view of a process.'
 pubDate: 2026-03-08
+updatedDate: 2026-10-23
 topic: process
 difficulty: intro
 tags: ['process', 'task_struct', 'fork', 'scheduler']
@@ -60,6 +61,21 @@ When you open `include/linux/sched.h` (or the generated headers in a build tree)
 - **scheduling** — policy, nice, CFS/EEVDF entities
 - **credentials** — `cred`
 
+## In Linux 7.2.11
+
+`struct task_struct` is in `include/linux/sched.h`. It is large and partly randomized (`randomized_struct_fields_start`) so you should search for names, not count offsets. The fields that match the diagram above are real members:
+
+| Member | Around | Meaning |
+| --- | --- | --- |
+| `mm`, `active_mm` | `struct mm_struct *` | Address space. Kernel threads often have `mm == NULL` and borrow `active_mm`. |
+| `pid`, `tgid` | `pid_t` | Thread id vs thread-group id. `getpid()` is the `tgid`. |
+| `real_cred`, `cred` | `const struct cred __rcu *` | Credentials. `cred` is what checks use; `real_cred` is the task’s own. |
+| `files` | `struct files_struct *` | Open-file table. |
+| `nsproxy` | `struct nsproxy *` | Namespace bundle (mnt, uts, ipc, net, …). |
+| `se` | `struct sched_entity` | Fair-scheduler bookkeeping. |
+
+A userspace `fork` / `clone` / `clone3` lands in `kernel/fork.c` as `kernel_clone()`. That function checks flags, then calls `copy_process()`, which allocates the new `task_struct` and copies or shares `mm`, files, signal state, and namespaces according to the `CLONE_*` bits. The parent’s return value is the new pid; the child is scheduled with a return value of 0. `execve` does not go through `copy_process`. It replaces the `mm` of an existing task (`fs/exec.c`, then `fs/binfmt_elf.c` for ELF).
+
 ## Experiment
 
 ```bash
@@ -91,6 +107,20 @@ bash -c 'echo parent=$$; bash -c "echo child=\$\$"'
    cat /proc/$$/status | grep -E '^(Name|State|PPid|Threads)'
    ```
 **Expect:** one PID for the process, one or more TIDs under `task/`, and a sensible `PPid`.
+
+</div>
+
+<div class="lab">
+
+### Lab — Point at the struct, not a diagram
+
+**Goal:** Confirm the names in this note exist in 7.2.11.
+
+1. Open `include/linux/sched.h` and search for `struct task_struct`.
+2. Find `mm`, `pid`, `tgid`, `files`, and `nsproxy`. Note that `pid` and `tgid` are not at the top of the struct.
+3. Open `kernel/fork.c` and find `kernel_clone`. One call inside it is `copy_process`.
+
+**Expect:** `kernel_clone` returns a `pid_t`. Sharing vs copying is decided by clone flags inside `copy_process`, not by a separate “thread object.”
 
 </div>
 

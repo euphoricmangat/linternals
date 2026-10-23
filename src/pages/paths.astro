@@ -40,6 +40,28 @@ mindmap
 				</script>
 			</section>
 
+			<section class="path">
+				<h2>Tree map — Linux 7.2.11</h2>
+				<p>
+					Read the notes, then open these directories in a local <code>linux-7.2.11</code> tree.
+					The map is the spine, not a file-by-file index of <code>drivers/</code>.
+				</p>
+				<ul>
+					<li><code>init/</code> — <a href={withBase('blog/how-the-kernel-boots')}>How the kernel boots</a></li>
+					<li><code>kernel/fork.c</code>, <code>include/linux/sched.h</code> — <a href={withBase('blog/anatomy-of-a-linux-process')}>Anatomy of a Linux process</a></li>
+					<li><code>kernel/signal.c</code> — <a href={withBase('blog/signals-and-process-lifecycle')}>Signals and process lifecycle</a></li>
+					<li><code>arch/x86/entry/</code> — <a href={withBase('blog/syscalls-crossing-the-boundary')}>Syscalls: crossing the boundary</a></li>
+					<li><code>mm/</code> — <a href={withBase('blog/virtual-memory-walkthrough')}>Virtual memory walkthrough</a></li>
+					<li><code>fs/</code> — <a href={withBase('blog/vfs-and-the-open-path')}>VFS and the open path</a></li>
+					<li><code>block/</code> — <a href={withBase('blog/block-layer-and-bio')}>Block layer and bio</a></li>
+					<li><code>net/</code> — <a href={withBase('blog/sockets-and-the-networking-stack')}>Sockets and the networking stack</a></li>
+					<li><code>io_uring/</code> — <a href={withBase('blog/io-uring-intro')}>io_uring intro</a></li>
+					<li><code>kernel/locking</code>, <code>kernel/rcu</code> — <a href={withBase('blog/locks-spinlocks-mutexes-rcu')}>Locks</a></li>
+					<li><code>kernel/cgroup</code>, namespaces — <a href={withBase('blog/namespaces-and-cgroups')}>Namespaces and cgroups</a></li>
+					<li><code>security/</code>, <code>kernel/seccomp.c</code> — <a href={withBase('blog/seccomp-bpf-intro')}>seccomp-BPF intro</a></li>
+				</ul>
+			</section>
+
 			<section class="path animate-rise-delay">
 				<h2>Path A — From power-on to PID 1</h2>
 				<p>Follow the machine from firmware into the kernel and the first userspace process.</p>

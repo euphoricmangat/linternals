@@ -2,7 +2,7 @@
 title: 'Signals and process lifecycle'
 description: 'Pending bits, handlers, stop/continue, and how kill becomes kernel work.'
 pubDate: 2026-05-24
-updatedDate: 2026-10-12
+updatedDate: 2026-10-23
 topic: process
 difficulty: intermediate
 tags: ['signal', 'kill', 'sigaction', 'zombie']
@@ -33,6 +33,25 @@ Rough path for `kill(2)`:
 2. Set a bit in the pending set (shared and/or per-thread, depending on signal).
 3. Wake the task if it was blocked in a way signals can interrupt.
 4. On the receiver side, exit-to-userspace code notices pending work, builds a **signal frame**, and rearranges user registers so execution resumes in the handler (or terminates).
+
+## In Linux 7.2.11
+
+The implementation is `kernel/signal.c`, not a separate “signal driver.”
+
+Sending starts at `do_send_sig_info()`. It locks the target’s sighand and calls `send_signal_locked()`, which reaches `__send_signal_locked()`. That queues the signal and calls `complete_signal()`, which picks a thread in the group and wakes it with `signal_wake_up`. Nothing in that path jumps into the user’s handler. The target might be inside the kernel, or not scheduled at all.
+
+Delivery is `get_signal()`. It runs when the task is about to return to user mode (or when an interruptible sleep notices `TIF_SIGPENDING`). `get_signal` takes `sighand->siglock`, dequeues one signal, and either stops the task, ignores it, or fills a `ksig` describing the action. If the action is a handler, architecture code (`arch/x86/kernel/signal.c` on x86) builds the signal frame and points the return address at the handler. If the action is death, the task exits and becomes a zombie until the parent waits.
+
+`SIGKILL` and `SIGSTOP` are special-cased so they cannot be blocked away. Job-control stop uses the same `get_signal` path: the task is marked stopped instead of having a user frame built.
+
+## Source landmarks
+
+| Piece | Where in 7.2.11 |
+| --- | --- |
+| Send | `kernel/signal.c` — `do_send_sig_info`, `send_signal_locked`, `complete_signal` |
+| Deliver | `kernel/signal.c` — `get_signal` |
+| x86 frame | `arch/x86/kernel/signal.c` |
+| Man | `signal(7)`, `sigaction(2)`, `kill(2)` |
 
 ## Default actions vs handlers
 
@@ -70,13 +89,6 @@ stateDiagram-v2
 
 In Linux, “process” for signals often means a **thread group**. `kill` targets the group; `tgkill` / `pthread_kill` target a specific TID. Some signals are process-directed (any thread may take them); others are thread-directed. Mixing these up shows up as “I sent SIGTERM but the wrong thread died” bugs in multithreaded servers.
 
-## Source landmarks
-
-| Piece | Where |
-| --- | --- |
-| Core | `kernel/signal.c` |
-| UAPI | `include/uapi/asm-generic/signal.h` |
-| Man | `signal(7)`, `sigaction(2)`, `kill(2)` |
 
 ## Lab — Pending and dispositions
 
@@ -92,6 +104,20 @@ kill -l | head -20
 ```
 
 **Expect:** `SigBlk` / `SigPnd` / `SigCgt` hex masks; `kill -l` lists names. After blocking a signal with a tiny C/Python program, `SigBlk` changes.
+
+</div>
+
+<div class="lab">
+
+### Lab — Send and deliver are different functions
+
+**Goal:** See that `kill` does not run the handler.
+
+1. Open `kernel/signal.c` in Linux 7.2.11.
+2. Find `do_send_sig_info` and `get_signal`. Confirm they are separate functions.
+3. Search `get_signal` for `sighand->siglock`. The handler is not invoked under that lock; the function decides the action and returns.
+
+**Expect:** `do_send_sig_info` returns an `int` (queued or an error). `get_signal` returns `bool` — true when there is an action for the exit-to-user path to perform.
 
 </div>
 

@@ -2,6 +2,7 @@
 title: 'Virtual memory walkthrough'
 description: 'Pages, page tables, and faults — how a process address space is wired to physical RAM.'
 pubDate: 2026-03-22
+updatedDate: 2026-10-23
 topic: memory
 difficulty: intermediate
 tags: ['mm', 'page-tables', 'faults', 'mmap']
@@ -33,6 +34,14 @@ erDiagram
 ## Address space pieces
 
 A process `mm_struct` tracks regions (`vm_area_struct` / VMAs): text, heap, stacks, `mmap` mappings, and so on.
+
+## In Linux 7.2.11
+
+The two structs live in `include/linux/mm_types.h`. `struct mm_struct` is the address space (`pgd`, the VMA tree, `mm_users`). `struct vm_area_struct` is one contiguous range: `vm_start` / `vm_end`, `vm_flags`, `vm_file` if the range is file-backed, and `vm_ops` for fault callbacks. A task reaches them through `task_struct.mm` (`include/linux/sched.h`). Kernel threads leave `mm` NULL.
+
+A user access that misses in the page tables enters the arch fault handler and, if the address falls in a VMA, calls `handle_mm_fault()` in `mm/memory.c`. That function checks the VMA allows the access (`arch_vma_access_permitted`), then either `hugetlb_fault` or the normal path `__handle_mm_fault`. Anonymous first-touch ends in `do_anonymous_page`; file-backed faults go through `do_fault`. Copy-on-write is a write fault on a page that is still shared. A bad access returns `VM_FAULT_SIGSEGV` and the arch code raises `SIGSEGV` — the fault handler does not “crash” by itself.
+
+`/proc/<pid>/maps` is a view of these VMAs, one line per `vm_area_struct`, not one line per page.
 
 ## Page fault = opportunity
 
@@ -92,11 +101,27 @@ head -n 40 /proc/$$/smaps
 
 </div>
 
+<div class="lab">
+
+### Lab — Name the fault entry
+
+**Goal:** Connect a line in `/proc/self/maps` to a function.
+
+1. Open `include/linux/mm_types.h` and find `struct vm_area_struct` and `struct mm_struct`.
+2. Open `mm/memory.c` and find `handle_mm_fault`. Note the `VM_FAULT_SIGSEGV` return when the VMA forbids the access.
+3. Search the same file for `do_anonymous_page` and `do_fault`.
+
+**Expect:** one maps line is a VMA. The page is created later, inside `handle_mm_fault`, only if something touches an address in that range.
+
+</div>
+
 ## Source landmarks
 
-- `mm/memory.c` — fault handling core
-- `mm/mmap.c` — creating and merging VMAs
-- `include/linux/mm_types.h` — `mm_struct`, page types
+| Piece | Where in 7.2.11 |
+| --- | --- |
+| Structs | `include/linux/mm_types.h` — `mm_struct`, `vm_area_struct` |
+| Faults | `mm/memory.c` — `handle_mm_fault`, `do_anonymous_page`, `do_fault` |
+| Creating VMAs | `mm/mmap.c` |
 
 ## Keep reading
 

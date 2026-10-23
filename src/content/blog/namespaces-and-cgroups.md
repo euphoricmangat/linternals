@@ -99,6 +99,7 @@ hostname
 
 ## Keep reading
 
+- [System V IPC and POSIX message queues](/linternals/blog/ipc-sysv-and-mqueue/)
 - [PID namespaces (deep)](/linternals/blog/pid-namespaces-deep/)
 - [Mount namespaces and bind mounts](/linternals/blog/mount-namespaces-and-bind-mounts/)
 - [Network namespaces and veth](/linternals/blog/netns-and-veth/)

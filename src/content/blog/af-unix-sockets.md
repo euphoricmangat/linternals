@@ -70,6 +70,7 @@ cat /proc/net/unix | head -15
 
 ## Keep reading
 
+- [System V IPC and POSIX message queues](/linternals/blog/ipc-sysv-and-mqueue/)
 - [Sockets and the networking stack](/linternals/blog/sockets-and-the-networking-stack/)
 - [TCP state machine sketch](/linternals/blog/tcp-state-machine-sketch/)
 - [Syscalls: crossing the boundary](/linternals/blog/syscalls-crossing-the-boundary/)

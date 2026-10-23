@@ -95,6 +95,7 @@ ls /sys/bus/pci/devices 2>/dev/null | head -3
 
 ## Keep reading
 
+- [A driver probe walk](/linternals/blog/driver-probe-walk/)
 - [DMA API sketch](/linternals/blog/dma-api-sketch/)
 - [Interrupts, softirqs, and bottom halves](/linternals/blog/interrupts-softirqs-and-tasklets/)
 - [kernel.org — driver model](https://docs.kernel.org/driver-api/driver-model/)

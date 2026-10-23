@@ -46,7 +46,7 @@ The instruction is still `syscall`. What it lands on is `entry_SYSCALL_64` in `a
 
 Exit tries `SYSRET` when the register state is still the clean 64-bit shape `syscall` entry set up (`rcx == rip`, `r11 == flags`, user CS/SS). Anything dirtier — a signal frame, a changed segment, Xen PV — returns false from `do_syscall_64` and the assembly takes the slower `IRET` path.
 
-So when you grep, search for `__x64_sys_openat` or `SYSCALL_DEFINE`, not for an indirect call through `sys_call_table` on this architecture.
+So when you grep, search for `__x64_sys_openat` or `SYSCALL_DEFINE`, not for an indirect call through `sys_call_table` on this architecture. The instruction-by-instruction landing is [x86-64 syscall entry](/linternals/blog/x86-syscall-entry/).
 
 ## Syscall vs hardware interrupt
 
@@ -127,6 +127,7 @@ Once you can name the syscall, you can grep the kernel for `SYSCALL_DEFINE` and 
 ## Keep reading
 
 - [man 2 syscalls](https://man7.org/linux/man-pages/man2/syscalls.2.html)
+- [x86-64 syscall entry](/linternals/blog/x86-syscall-entry/)
 - [vDSO and vsyscall](/linternals/blog/vdso-and-vsyscall/)
 - [epoll and event loops](/linternals/blog/epoll-and-event-loops/)
 - [io_uring intro](/linternals/blog/io-uring-intro/)

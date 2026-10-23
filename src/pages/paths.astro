@@ -50,13 +50,15 @@ mindmap
 					<li><code>init/</code> — <a href={withBase('blog/how-the-kernel-boots')}>How the kernel boots</a></li>
 					<li><code>kernel/fork.c</code>, <code>include/linux/sched.h</code> — <a href={withBase('blog/anatomy-of-a-linux-process')}>Anatomy of a Linux process</a></li>
 					<li><code>kernel/signal.c</code> — <a href={withBase('blog/signals-and-process-lifecycle')}>Signals and process lifecycle</a></li>
-					<li><code>arch/x86/entry/</code> — <a href={withBase('blog/syscalls-crossing-the-boundary')}>Syscalls: crossing the boundary</a></li>
+					<li><code>arch/x86/entry/</code> — <a href={withBase('blog/syscalls-crossing-the-boundary')}>Syscalls: crossing the boundary</a>, <a href={withBase('blog/x86-syscall-entry')}>x86-64 syscall entry</a></li>
 					<li><code>mm/</code> — <a href={withBase('blog/virtual-memory-walkthrough')}>Virtual memory walkthrough</a></li>
 					<li><code>fs/</code> — <a href={withBase('blog/vfs-and-the-open-path')}>VFS and the open path</a></li>
 					<li><code>block/</code> — <a href={withBase('blog/block-layer-and-bio')}>Block layer and bio</a></li>
+					<li><code>ipc/</code> — <a href={withBase('blog/ipc-sysv-and-mqueue')}>System V IPC and POSIX message queues</a></li>
 					<li><code>net/</code> — <a href={withBase('blog/sockets-and-the-networking-stack')}>Sockets and the networking stack</a></li>
 					<li><code>io_uring/</code> — <a href={withBase('blog/io-uring-intro')}>io_uring intro</a></li>
 					<li><code>kernel/locking</code>, <code>kernel/rcu</code> — <a href={withBase('blog/locks-spinlocks-mutexes-rcu')}>Locks</a></li>
+					<li><code>drivers/base/dd.c</code> — <a href={withBase('blog/driver-probe-walk')}>A driver probe walk</a></li>
 					<li><code>kernel/cgroup</code>, namespaces — <a href={withBase('blog/namespaces-and-cgroups')}>Namespaces and cgroups</a></li>
 					<li><code>security/</code>, <code>kernel/seccomp.c</code> — <a href={withBase('blog/seccomp-bpf-intro')}>seccomp-BPF intro</a></li>
 				</ul>
@@ -130,6 +132,7 @@ sequenceDiagram
 				</script>
 				<ul>
 					<li><a href={withBase('blog/syscalls-crossing-the-boundary')}>Syscalls: crossing the boundary</a></li>
+					<li><a href={withBase('blog/x86-syscall-entry')}>x86-64 syscall entry</a></li>
 					<li><a href={withBase('blog/vdso-and-vsyscall')}>vDSO and vsyscall</a></li>
 					<li><a href={withBase('blog/virtual-memory-walkthrough')}>Virtual memory walkthrough</a></li>
 					<li><a href={withBase('blog/page-tables-and-tlb')}>Page tables and the TLB</a></li>
@@ -207,6 +210,7 @@ sequenceDiagram
 				<ul>
 					<li><a href={withBase('blog/sockets-and-the-networking-stack')}>Sockets and the networking stack</a></li>
 					<li><a href={withBase('blog/af-unix-sockets')}>AF_UNIX sockets</a></li>
+					<li><a href={withBase('blog/ipc-sysv-and-mqueue')}>System V IPC and POSIX message queues</a></li>
 					<li><a href={withBase('blog/tcp-state-machine-sketch')}>TCP state machine sketch</a></li>
 					<li><a href={withBase('blog/napi-and-softnet')}>NAPI and softnet</a></li>
 					<li><a href={withBase('blog/netfilter-and-hooks-sketch')}>Netfilter hooks sketch</a></li>
@@ -239,6 +243,7 @@ sequenceDiagram
 					<li><a href={withBase('blog/futexes-userspace-to-kernel')}>Futexes: userspace to kernel</a></li>
 					<li><a href={withBase('blog/workqueues-and-kthreads')}>Workqueues and kthreads</a></li>
 					<li><a href={withBase('blog/kernel-modules-and-device-model')}>Kernel modules and the device model</a></li>
+					<li><a href={withBase('blog/driver-probe-walk')}>A driver probe walk</a></li>
 					<li><a href={withBase('blog/dma-api-sketch')}>DMA API sketch</a></li>
 					<li><a href={withBase('blog/interrupts-softirqs-and-tasklets')}>Interrupts, softirqs, and bottom halves</a></li>
 				</ul>

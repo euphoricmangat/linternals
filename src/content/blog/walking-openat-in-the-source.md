@@ -2,12 +2,13 @@
 title: 'Source walk: openat'
 description: 'A guided pass through do_sys_openat2 — from syscall entry to VFS path walk.'
 pubDate: 2026-06-21
+updatedDate: 2026-10-23
 topic: filesystem
 difficulty: deep
 tags: ['openat', 'source-walk', 'namei', 'SYSCALL_DEFINE']
 ---
 
-This note is a **reading script**, not a full annotated listing. Open a kernel tree (or [Elixir](https://elixir.bootlin.com/linux/latest/source)) and follow the stops in order.
+This note is a **reading script** for **Linux 7.2.11**, not a full annotated listing. Open `kernel/linux-7.2.11` and follow the stops in order. Older trees call the middle function `do_filp_open`; this tree calls it `do_file_open`.
 
 ## Why openat
 
@@ -17,7 +18,7 @@ This note is a **reading script**, not a full annotated listing. Open a kernel t
 flowchart TD
   SC[SYSCALL_DEFINE openat / openat2] --> Do[do_sys_openat2]
   Do --> Build[build open_flags]
-  Build --> Filp[do_filp_open]
+  Build --> Filp[do_file_open]
   Filp --> Path[path_openat / namei]
   Path --> Done[fd_install]
 ```
@@ -36,7 +37,7 @@ Usually in `fs/open.c`. Skim:
 
 - how `struct open_flags` is filled
 - get unused fd / error paths
-- call into `do_filp_open`
+- call into `do_file_open` (not `do_filp_open`; that name is gone here)
 
 ### 3. Path walk (`fs/namei.c`)
 
@@ -61,7 +62,7 @@ sequenceDiagram
 
 ### 4. Return path
 
-Confirm `fd_install` (or equivalent) publishes the `struct file` to the fd table before returning to userspace.
+Back in `do_sys_openat2`, `FD_ADD` publishes the `struct file` into the fd table and returns the number. If `do_file_open` failed, nothing is installed.
 
 ## Lab — Trace then grep
 
@@ -73,7 +74,7 @@ Confirm `fd_install` (or equivalent) publishes the `struct file` to the fd table
    ```bash
    strace -e openat ls /etc/hosts 2>&1 | head
    ```
-2. In a kernel tree or Elixir, search `do_sys_openat2`.
+2. In the 7.2.11 tree, search `do_sys_openat2`, then `do_file_open`.
 3. Write five bullets: entry file, three callees, one error path you noticed.
 
 </div>

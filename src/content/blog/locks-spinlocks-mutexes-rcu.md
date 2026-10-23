@@ -2,7 +2,7 @@
 title: 'Locks: spinlocks, mutexes, RCU'
 description: 'When the kernel waits, spins, or publishes lock-free reads — picking the right sync primitive.'
 pubDate: 2026-04-26
-updatedDate: 2026-10-12
+updatedDate: 2026-10-23
 topic: sync
 difficulty: deep
 tags: ['spinlock', 'mutex', 'rcu', 'locking']
@@ -75,18 +75,29 @@ Mental rules:
 
 Deeper dive: [RCU grace periods](/linternals/blog/rcu-grace-periods/).
 
+## In Linux 7.2.11
+
+These are three different kinds of function, not three wrappers around one lock.
+
+**Spinlocks.** `kernel/locking/spinlock.c` defines `_raw_spin_lock`, `_raw_spin_lock_irq`, and `_raw_spin_lock_bh`. The headers turn `spin_lock()` into the raw function (or a lockdep-annotated wrapper). `_raw_spin_lock_irq` saves the interrupt flag and disables local IRQs for the hold. `_raw_spin_lock_bh` disables bottom halves so a softirq on this CPU cannot take the same lock. None of them call `schedule`.
+
+**Mutexes.** `mutex_lock` in `kernel/locking/mutex.c` starts with `might_sleep()`. The fast path is `__mutex_trylock_fast`. If the owner is set, `__mutex_lock_slowpath` queues the task and sleeps. The comment above `mutex_lock` states the rules you can check in review: same task must unlock, no recursion, do not free the memory while it is locked. `CONFIG_DEBUG_MUTEXES` enforces that.
+
+**RCU.** `rcu_read_lock` is an inline in `include/linux/rcupdate.h`. It calls `__rcu_read_lock()` and a lockdep acquire. The comment directly under it says `rcu_write_lock` does not exist: writers do not lock readers out. Writers exclude each other with a spinlock or mutex, publish with `rcu_assign_pointer`, then wait in `synchronize_rcu` (`kernel/rcu/tree.c` on the normal SMP build). That function warns if you call it from inside a read-side section. `call_rcu` schedules the free instead of waiting.
+
 ## Ordering and memory
 
 Locks do double duty: **exclusion** and **memory ordering**. Unlocking guarantees other CPUs see prior writes once they take the same lock. Lockless algorithms need barriers / `READ_ONCE` / `WRITE_ONCE` / atomics — getting this wrong is architecture-dependent pain.
 
 ## Source landmarks
 
-| Piece | Where |
+| Piece | Where in 7.2.11 |
 | --- | --- |
-| Spinlocks / mutexes | `kernel/locking/` |
-| RCU | `kernel/rcu/` |
+| Spin | `kernel/locking/spinlock.c` — `_raw_spin_lock`, `_raw_spin_lock_irq` |
+| Mutex | `kernel/locking/mutex.c` — `mutex_lock` |
+| Read-side | `include/linux/rcupdate.h` — `rcu_read_lock` |
+| Grace period | `kernel/rcu/tree.c` — `synchronize_rcu` |
 | Lockdep | `kernel/locking/lockdep.c` |
-| Docs | `Documentation/locking/`, `Documentation/RCU/` |
 
 ## Lab — Contended locks in the wild (soft)
 
@@ -101,6 +112,20 @@ grep -E 'mutex_lock|spin_lock|_rcu' /proc/kallsyms 2>/dev/null | head -10 || ech
 ```
 
 **Expect:** either symbol lines hinting at the APIs, or a permission/lockdown message. On a debug kernel, lockdep splats in `dmesg` are the real teacher.
+
+</div>
+
+<div class="lab">
+
+### Lab — Three functions, three files
+
+**Goal:** See sleep, spin, and “no writer lock” in the source.
+
+1. Open `kernel/locking/mutex.c` and find `mutex_lock`. The first call in the body is `might_sleep()`.
+2. Open `kernel/locking/spinlock.c` and find `_raw_spin_lock_irq` and `_raw_spin_lock_bh`.
+3. Open `include/linux/rcupdate.h` and find `rcu_read_lock`. Read the comment that says `rcu_write_lock` does not exist.
+
+**Expect:** a mutex is allowed to sleep, a spinlock is not, and RCU has no writer-side counterpart of `rcu_read_lock`.
 
 </div>
 

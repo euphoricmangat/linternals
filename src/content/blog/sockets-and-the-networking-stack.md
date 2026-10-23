@@ -2,7 +2,7 @@
 title: 'Sockets and the networking stack'
 description: 'From socket() to sk_buff — how packets climb the TCP/IP stack inside Linux.'
 pubDate: 2026-04-12
-updatedDate: 2026-10-12
+updatedDate: 2026-10-23
 topic: networking
 difficulty: intermediate
 tags: ['socket', 'tcp', 'skb', 'net']
@@ -22,6 +22,16 @@ flowchart TD
 ```
 
 Userspace sees an `fd`. Inside the kernel that fd refers to a `struct socket` wrapping a protocol-specific `struct sock` (`tcp_sock`, …). Syscalls like `sendmsg` / `recvmsg` land in `net/socket.c` and dispatch through protocol operation tables.
+
+## In Linux 7.2.11
+
+`socket()` is `SYSCALL_DEFINE3(socket` in `net/socket.c`. It calls `__sys_socket`, which calls `__sys_socket_create` and then `sock_map_fd`. Creation is where `AF_INET` versus `AF_UNIX` is chosen: the family picks a `struct net_proto_family`, that allocates a `struct socket`, and the protocol attaches `sock->ops` and `sock->sk`. The fd is just an index to that socket, same as any other file.
+
+A later `sendmsg` reaches `__sock_sendmsg`. The first thing that function does is `security_socket_sendmsg` (the LSM hook). If that allows the call, `sock_sendmsg_nosec` performs an indirect call through `sock->ops->sendmsg`. For IPv4 that is `inet_sendmsg`, which copies the payload into an `sk_buff` and hands it to TCP or UDP. The socket layer does not build an Ethernet header.
+
+Receive comes from the other end. A NAPI poll builds an skb and eventually calls `netif_receive_skb` in `net/core/dev.c`. The comment there says it is the main receive data processing function, and it may only be used in a context that can run softirq work. It calls `netif_receive_skb_internal` → `__netif_receive_skb` → `__netif_receive_skb_core`, which walks packet types (IP, ARP, …) and delivers to the protocol. The matching socket is found by the protocol, not by `netif_receive_skb` itself. `recvmsg` then copies from that socket’s receive queue.
+
+`struct sk_buff` is defined in `include/linux/skbuff.h`. Header pointers (`mac_header`, `network_header`, `transport_header`) are offsets into the same buffer so each layer can push or pull without copying the payload.
 
 ## Outbound sketch (TCP)
 
@@ -66,12 +76,13 @@ Filters and policy hit the path via **netfilter** hooks ([Netfilter hooks sketch
 
 ## Source landmarks
 
-| Piece | Where |
+| Piece | Where in 7.2.11 |
 | --- | --- |
-| Syscall side | `net/socket.c` |
-| IPv4 / TCP | `net/ipv4/` |
-| sk_buff | `include/linux/skbuff.h`, `net/core/skbuff.c` |
-| Device core | `net/core/dev.c` |
+| Create | `net/socket.c` — `__sys_socket`, `sock_map_fd` |
+| Send | `net/socket.c` — `__sock_sendmsg`, `sock->ops->sendmsg` |
+| Receive | `net/core/dev.c` — `netif_receive_skb`, `__netif_receive_skb_core` |
+| Packet | `include/linux/skbuff.h` |
+| TCP | `net/ipv4/tcp_input.c`, `net/ipv4/tcp_output.c` |
 
 ## Lab — Watch sockets
 
@@ -87,6 +98,20 @@ head -5 /proc/net/tcp
 ```
 
 **Expect:** listening and established sockets; `-ti` adds TCP internals (cwnd, rtt) when available; `/proc/net/tcp` shows hex addresses and state codes.
+
+</div>
+
+<div class="lab">
+
+### Lab — Create and send are different files from receive
+
+**Goal:** See the socket layer stop at `ops->sendmsg`.
+
+1. Open `net/socket.c` and find `SYSCALL_DEFINE3(socket`. It should call `__sys_socket`.
+2. Find `sock_sendmsg_nosec`. The call is `sock->ops->sendmsg`, not a direct call to `tcp_sendmsg`.
+3. Open `net/core/dev.c` and find `netif_receive_skb`. Read the comment immediately above it.
+
+**Expect:** TX enters through the socket ops. RX enters through `netif_receive_skb` from the driver / NAPI side. They meet only at the `struct sock` queues.
 
 </div>
 

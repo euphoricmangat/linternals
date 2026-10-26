@@ -75,7 +75,7 @@ Mental rules:
 
 Deeper dive: [RCU grace periods](/linternals/blog/rcu-grace-periods/).
 
-## In Linux 7.2.11
+## In the kernel
 
 These are three different kinds of function, not three wrappers around one lock.
 
@@ -91,7 +91,7 @@ Locks do double duty: **exclusion** and **memory ordering**. Unlocking guarantee
 
 ## Source landmarks
 
-| Piece | Where in 7.2.11 |
+| Piece | Where |
 | --- | --- |
 | Spin | `kernel/locking/spinlock.c` — `_raw_spin_lock`, `_raw_spin_lock_irq` |
 | Mutex | `kernel/locking/mutex.c` — `mutex_lock` |

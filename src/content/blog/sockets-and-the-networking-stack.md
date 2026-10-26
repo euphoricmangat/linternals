@@ -23,7 +23,7 @@ flowchart TD
 
 Userspace sees an `fd`. Inside the kernel that fd refers to a `struct socket` wrapping a protocol-specific `struct sock` (`tcp_sock`, …). Syscalls like `sendmsg` / `recvmsg` land in `net/socket.c` and dispatch through protocol operation tables.
 
-## In Linux 7.2.11
+## In the kernel
 
 `socket()` is `SYSCALL_DEFINE3(socket` in `net/socket.c`. It calls `__sys_socket`, which calls `__sys_socket_create` and then `sock_map_fd`. Creation is where `AF_INET` versus `AF_UNIX` is chosen: the family picks a `struct net_proto_family`, that allocates a `struct socket`, and the protocol attaches `sock->ops` and `sock->sk`. The fd is just an index to that socket, same as any other file.
 
@@ -76,7 +76,7 @@ Filters and policy hit the path via **netfilter** hooks ([Netfilter hooks sketch
 
 ## Source landmarks
 
-| Piece | Where in 7.2.11 |
+| Piece | Where |
 | --- | --- |
 | Create | `net/socket.c` — `__sys_socket`, `sock_map_fd` |
 | Send | `net/socket.c` — `__sock_sendmsg`, `sock->ops->sendmsg` |

@@ -46,7 +46,7 @@ Then `call do_syscall_64`. Interrupts are still off. The comment on that call sa
 
 ## Source landmarks
 
-| Piece | Where in 7.2.11 |
+| Piece | Where |
 | --- | --- |
 | Entry stub | `arch/x86/entry/entry_64.S` — `entry_SYSCALL_64`, `syscall_return_via_sysret` |
 | Dispatch | `arch/x86/entry/syscall_64.c` — `do_syscall_64`, `x64_sys_call` |

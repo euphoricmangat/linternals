@@ -35,7 +35,7 @@ erDiagram
 
 A process `mm_struct` tracks regions (`vm_area_struct` / VMAs): text, heap, stacks, `mmap` mappings, and so on.
 
-## In Linux 7.2.11
+## In the kernel
 
 The two structs live in `include/linux/mm_types.h`. `struct mm_struct` is the address space (`pgd`, the VMA tree, `mm_users`). `struct vm_area_struct` is one contiguous range: `vm_start` / `vm_end`, `vm_flags`, `vm_file` if the range is file-backed, and `vm_ops` for fault callbacks. A task reaches them through `task_struct.mm` (`include/linux/sched.h`). Kernel threads leave `mm` NULL.
 
@@ -117,7 +117,7 @@ head -n 40 /proc/$$/smaps
 
 ## Source landmarks
 
-| Piece | Where in 7.2.11 |
+| Piece | Where |
 | --- | --- |
 | Structs | `include/linux/mm_types.h` — `mm_struct`, `vm_area_struct` |
 | Faults | `mm/memory.c` — `handle_mm_fault`, `do_anonymous_page`, `do_fault` |

@@ -47,7 +47,7 @@ So a strace of `mq_open` resembles `openat`. A strace of `shmget` does not.
 
 ## Source landmarks
 
-| Piece | Where in 7.2.11 |
+| Piece | Where |
 | --- | --- |
 | Id table | `ipc/util.c` — `ipc_init_ids`, `ipc_addid` |
 | Shared memory | `ipc/shm.c` — `shmget`, `shmat` |

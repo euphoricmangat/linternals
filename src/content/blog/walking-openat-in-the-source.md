@@ -8,7 +8,7 @@ difficulty: deep
 tags: ['openat', 'source-walk', 'namei', 'SYSCALL_DEFINE']
 ---
 
-This note is a **reading script** for **Linux 7.2.11**, not a full annotated listing. Open `kernel/linux-7.2.11` and follow the stops in order. Older trees call the middle function `do_filp_open`; this tree calls it `do_file_open`.
+This note is a **reading script**, not a full annotated listing. Open a kernel tree and follow the stops in order. Current kernels call the middle function `do_file_open`. Older trees call it `do_filp_open`.
 
 ## Why openat
 
@@ -74,7 +74,7 @@ Back in `do_sys_openat2`, `FD_ADD` publishes the `struct file` into the fd table
    ```bash
    strace -e openat ls /etc/hosts 2>&1 | head
    ```
-2. In the 7.2.11 tree, search `do_sys_openat2`, then `do_file_open`.
+2. In a kernel tree, search `do_sys_openat2`, then `do_file_open` (or `do_filp_open` on an older tree).
 3. Write five bullets: entry file, three callees, one error path you noticed.
 
 </div>

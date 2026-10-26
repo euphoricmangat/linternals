@@ -53,7 +53,7 @@ classDiagram
 2. `submit_bio` enters the block layer; multi-queue (blk-mq) paths dominate modern kernels.
 3. The driver maps bios to hardware commands; completion callbacks clear pages / wake waiters.
 
-## In Linux 7.2.11
+## In the kernel
 
 `struct bio` is in `include/linux/blk_types.h`. The fields that matter on a first read are `bi_bdev` (which device), `bi_opf` (read, write, flush, …), `bi_iter` (current sector and size), `bi_io_vec` (the page segments), and `bi_end_io` (who to call when the I/O finishes). A bio is not a request. Several bios can be merged into one `struct request` later, and a bio can also be split if it is too large for the queue.
 
@@ -66,7 +66,7 @@ Completion is the reverse: the driver calls `bio_endio`, which runs `bi_end_io`.
 
 ## Source landmarks
 
-| Piece | Where in 7.2.11 |
+| Piece | Where |
 | --- | --- |
 | `struct bio` | `include/linux/blk_types.h` |
 | Alloc | `block/bio.c` — `bio_alloc_bioset` |

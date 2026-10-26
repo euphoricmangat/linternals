@@ -36,7 +36,7 @@ sequenceDiagram
 4. A **syscall number** indexes a table of handlers (`sys_openat`, …).
 5. The handler runs with kernel privileges, then returns a value that libc maps to success or `errno`.
 
-## In Linux 7.2.11 (x86-64)
+## In the kernel
 
 The instruction is still `syscall`. What it lands on is `entry_SYSCALL_64` in `arch/x86/entry/entry_64.S`. That stub `swapgs`es, switches to the kernel stack and kernel CR3, builds a `struct pt_regs` (user `rsp`, `rflags`, `rip` from `rcx`, syscall number from `eax`), then `call do_syscall_64`.
 
@@ -110,7 +110,7 @@ strace -c ls /   # summary counts
 
 ### Lab — Follow one `syscall` instruction
 
-**Goal:** See the 7.2.11 entry path, including the unused table.
+**Goal:** See the x86-64 entry path, including the unused table.
 
 1. Open `arch/x86/entry/entry_64.S` and find `entry_SYSCALL_64`. Confirm the `call do_syscall_64`.
 2. Open `arch/x86/entry/syscall_64.c`. Read the comment on `sys_call_table` and the `switch` inside `x64_sys_call`.

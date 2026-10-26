@@ -57,7 +57,7 @@ sequenceDiagram
   VFS-->>App: fd
 ```
 
-## In Linux 7.2.11
+## In the kernel
 
 `open` and `openat` are both `SYSCALL_DEFINE` wrappers in `fs/open.c`. They call `do_sys_open`, which fills a `struct open_how` and calls `do_sys_openat2`. That function builds `struct open_flags` and publishes the result with `FD_ADD(..., do_file_open(...))`. The returned number is the fd. A negative errno never becomes an installed descriptor.
 
@@ -74,7 +74,7 @@ The filesystem does not see the path string. It sees a dentry and an inode that 
 
 ## Source landmarks
 
-| Piece | Where in 7.2.11 |
+| Piece | Where |
 | --- | --- |
 | Syscall | `fs/open.c` — `SYSCALL_DEFINE4(openat`, `do_sys_openat2` |
 | Walk | `fs/namei.c` — `do_file_open`, `path_openat`, `link_path_walk` |
@@ -99,7 +99,7 @@ stat /
 2. Open `fs/namei.c` and find `do_file_open`. The first `path_openat` call passes `LOOKUP_RCU`.
 3. In `path_openat`, find the `while` loop that calls `link_path_walk` and `open_last_lookups`.
 
-**Expect:** `do_filp_open` is not in this tree. The 7.2.11 name is `do_file_open`.
+**Expect:** current kernels call this `do_file_open`. Older trees used the name `do_filp_open` for the same step.
 
 </div>
 

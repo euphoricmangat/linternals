@@ -61,7 +61,7 @@ When you open `include/linux/sched.h` (or the generated headers in a build tree)
 - **scheduling** — policy, nice, CFS/EEVDF entities
 - **credentials** — `cred`
 
-## In Linux 7.2.11
+## In the kernel
 
 `struct task_struct` is in `include/linux/sched.h`. It is large and partly randomized (`randomized_struct_fields_start`) so you should search for names, not count offsets. The fields that match the diagram above are real members:
 
@@ -114,7 +114,7 @@ bash -c 'echo parent=$$; bash -c "echo child=\$\$"'
 
 ### Lab — Point at the struct, not a diagram
 
-**Goal:** Confirm the names in this note exist in 7.2.11.
+**Goal:** Confirm the names in this note exist in the kernel tree you have open.
 
 1. Open `include/linux/sched.h` and search for `struct task_struct`.
 2. Find `mm`, `pid`, `tgid`, `files`, and `nsproxy`. Note that `pid` and `tgid` are not at the top of the struct.

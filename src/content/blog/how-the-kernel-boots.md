@@ -42,7 +42,7 @@ timeline
 3. **Early kernel** — architecture-specific setup (`setup_arch`), memory bring-up, then `start_kernel()` in `init/main.c`.
 4. **Rest of init** — subsystems register, root filesystem mounts, then the first userspace process starts.
 
-## In Linux 7.2.11
+## In the kernel
 
 Open `init/main.c` and read three functions in this order. Do not try to memorize every call inside `start_kernel`; notice **what must exist before the next step is legal**.
 
@@ -56,7 +56,7 @@ On x86 the arch half of “early kernel” is `setup_arch` in `arch/x86/kernel/s
 
 ## Source landmarks
 
-| Area | Where to look in 7.2.11 |
+| Area | Where to look |
 | --- | --- |
 | Generic init | `init/main.c` — `start_kernel`, `rest_init`, `kernel_init` |
 | Arch setup | `arch/x86/kernel/setup.c` — `setup_arch` |
@@ -104,7 +104,7 @@ ps -p 1 -o pid,cmd
 
 **Goal:** See pid 1 created before userspace exists.
 
-1. Open `init/main.c` in your Linux 7.2.11 tree.
+1. Open `init/main.c` in a kernel tree.
 2. Find `rest_init`. Confirm it calls `user_mode_thread(kernel_init, ...)` **before** `kernel_thread(kthreadd, ...)`.
 3. Find `kernel_init` and the four `try_to_run_init_process` paths.
 

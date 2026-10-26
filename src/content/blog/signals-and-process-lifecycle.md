@@ -34,7 +34,7 @@ Rough path for `kill(2)`:
 3. Wake the task if it was blocked in a way signals can interrupt.
 4. On the receiver side, exit-to-userspace code notices pending work, builds a **signal frame**, and rearranges user registers so execution resumes in the handler (or terminates).
 
-## In Linux 7.2.11
+## In the kernel
 
 The implementation is `kernel/signal.c`, not a separate “signal driver.”
 
@@ -46,7 +46,7 @@ Delivery is `get_signal()`. It runs when the task is about to return to user mod
 
 ## Source landmarks
 
-| Piece | Where in 7.2.11 |
+| Piece | Where |
 | --- | --- |
 | Send | `kernel/signal.c` — `do_send_sig_info`, `send_signal_locked`, `complete_signal` |
 | Deliver | `kernel/signal.c` — `get_signal` |
@@ -113,7 +113,7 @@ kill -l | head -20
 
 **Goal:** See that `kill` does not run the handler.
 
-1. Open `kernel/signal.c` in Linux 7.2.11.
+1. Open `kernel/signal.c` in a kernel tree.
 2. Find `do_send_sig_info` and `get_signal`. Confirm they are separate functions.
 3. Search `get_signal` for `sighand->siglock`. The handler is not invoked under that lock; the function decides the action and returns.
 

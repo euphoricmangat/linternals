@@ -7,7 +7,7 @@ difficulty: intermediate
 tags: ['probe', 'platform', 'driver-model', 'atmel-ssc']
 ---
 
-[Kernel modules and the device model](/linternals/blog/kernel-modules-and-device-model/) says a bus matches a device to a driver and then calls `probe`. This note follows that call in Linux 7.2.11, then reads one probe body so the steps are concrete.
+[Kernel modules and the device model](/linternals/blog/kernel-modules-and-device-model/) says a bus matches a device to a driver and then calls `probe`. This note follows that call, then reads one probe body so the steps are concrete.
 
 ## Two layers
 
@@ -43,7 +43,7 @@ This is one driver. The bind path in `dd.c` is the part that applies to USB, PCI
 
 ## Source landmarks
 
-| Piece | Where in 7.2.11 |
+| Piece | Where |
 | --- | --- |
 | Bind | `drivers/base/dd.c` — `really_probe`, `call_driver_probe` |
 | Example | `drivers/misc/atmel-ssc.c` — `ssc_probe`, `ssc_driver` |

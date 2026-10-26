@@ -2,6 +2,7 @@
 title: 'Page cache and writeback'
 description: 'How file data sits in RAM, when dirty pages flush, and where to read the mm/fs handoff.'
 pubDate: 2026-06-07
+updatedDate: 2026-10-26
 topic: memory
 difficulty: deep
 tags: ['page-cache', 'writeback', 'folio', 'dirty']
@@ -34,6 +35,14 @@ flowchart LR
 2. Background flusher threads / balance_dirty_pages decide when to writeback.
 3. Filesystem turns dirty ranges into bios; storage completes; pages clean again.
 
+## In the kernel
+
+The cache is an `address_space` hanging off the inode (`i_mapping` / `file->f_mapping`). A folio is the object stored there, indexed by file offset. `read` on a normal file ends in `filemap_read` in `mm/filemap.c`. It looks at `filp->f_mapping`, batches folios that cover the requested range, and copies them to the iterator. A hole in the cache is filled by `filemap_read_folio`, which calls the filesystem’s filler. That filler builds bios; the page cache does not know the on-disk layout.
+
+`write` of a cached file ends in `generic_perform_write`, also in `mm/filemap.c`. Each chunk starts with `balance_dirty_pages_ratelimited`. That wrapper lives in `mm/page-writeback.c` and, when the caller is dirtying memory faster than writeback can drain it, calls `balance_dirty_pages` and sleeps the writer. Then the filesystem’s `write_begin` gets or creates the folio, the copy lands in it, and `write_end` marks it dirty. The bytes are not on disk yet. The flusher work lives in `fs/fs-writeback.c`: it takes dirty folios, asks the filesystem to turn them into bios, and the completion path marks them clean.
+
+`mmap` of a file shares this cache. A fault in that VMA calls `filemap_fault`, which finds or reads the same folio `read` would have used. There is one copy of the file page, whether you `read` it or fault it.
+
 ```mermaid
 sequenceDiagram
   participant App
@@ -51,10 +60,11 @@ sequenceDiagram
 
 | Idea | Where |
 | --- | --- |
-| address_space / mapping | `include/linux/fs.h`, `mm/filemap.c` |
-| filemap read | `mm/filemap.c` (`filemap_read`, etc.) |
-| writeback | `mm/page-writeback.c`, `fs/fs-writeback.c` |
-| folios | `mm/folio-*.c`, docs under `Documentation/mm/` |
+| Read | `mm/filemap.c` — `filemap_read`, `filemap_read_folio` |
+| Write | `mm/filemap.c` — `generic_perform_write` |
+| Throttle | `mm/page-writeback.c` — `balance_dirty_pages_ratelimited` |
+| Flusher | `fs/fs-writeback.c` |
+| Fault | `mm/filemap.c` — `filemap_fault` |
 
 ## Lab — Watch cache pressure
 
